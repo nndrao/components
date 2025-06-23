@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter Tab - Column Formatting</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .filter-option-card {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: var(--muted);
+        }
+        
+        .multi-filter-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        
+        .filter-type-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--muted);
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+        
+        .advanced-panel {
+            background: var(--muted);
+            border-radius: 4px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+        
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .collapsible-content {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Filter Tab</h1>
+        <p class="text-muted mb-3">Configure column filtering behavior and options</p>
+        
+        <!-- Main Filter Configuration -->
+        <div class="bg-card border rounded-lg p-4 mb-4">
+            <div class="flex gap-4">
+                <!-- Left: Filter Settings -->
+                <div class="flex-1">
+                    <!-- Filter Type Selection -->
+                    <div class="mb-3">
+                        <label class="form-label">Filter Type</label>
+                        <select class="select w-full" onchange="updateFilterOptions(this.value)">
+                            <option value="text" selected>Text Filter</option>
+                            <option value="number">Number Filter</option>
+                            <option value="date">Date Filter</option>
+                            <option value="set">Set Filter (Dropdown)</option>
+                            <option value="boolean">Boolean Filter</option>
+                            <option value="multi">Multi Filter (Combine)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Quick Options -->
+                    <div class="flex gap-3 mb-4">
+                        <div class="switch-group">
+                            <div class="switch checked">
+                                <div class="switch-thumb"></div>
+                            </div>
+                            <label class="text-xs">Floating Filter</label>
+                        </div>
+                        
+                        <div class="switch-group">
+                            <div class="switch">
+                                <div class="switch-thumb"></div>
+                            </div>
+                            <label class="text-xs">Hide Menu Button</label>
+                        </div>
+                        
+                        <div class="switch-group">
+                            <div class="switch">
+                                <div class="switch-thumb"></div>
+                            </div>
+                            <label class="text-xs">Hide Filter Panel</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Text Filter Options -->
+                    <div id="text-filter-options" class="filter-option-card">
+                        <h4 class="text-xs font-semibold mb-3">TEXT FILTER OPTIONS</h4>
+                        
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="form-label text-xs">Default Operator</label>
+                                <select class="select w-full">
+                                    <option>Contains</option>
+                                    <option>Equals</option>
+                                    <option>Starts with</option>
+                                    <option>Ends with</option>
+                                    <option>Not contains</option>
+                                    <option>Not equals</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label text-xs">Debounce (ms)</label>
+                                <input type="number" class="input w-full" value="250">
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-3">
+                            <div class="switch-group">
+                                <div class="switch checked">
+                                    <div class="switch-thumb"></div>
+                                </div>
+                                <label class="text-xs">Trim Input</label>
+                            </div>
+                            
+                            <div class="switch-group">
+                                <div class="switch">
+                                    <div class="switch-thumb"></div>
+                                </div>
+                                <label class="text-xs">Case Sensitive</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Advanced Settings (Collapsible) -->
+                    <div class="advanced-panel">
+                        <div class="collapsible-header" onclick="toggleAdvanced()">
+                            <span class="text-xs font-semibold">ADVANCED SETTINGS</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </div>
+                        
+                        <div class="collapsible-content" style="display: none;" id="advanced-content">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="switch-group">
+                                    <div class="switch checked">
+                                        <div class="switch-thumb"></div>
+                                    </div>
+                                    <label class="text-xs">Show Clear Button</label>
+                                </div>
+                                
+                                <div class="switch-group">
+                                    <div class="switch">
+                                        <div class="switch-thumb"></div>
+                                    </div>
+                                    <label class="text-xs">Close on Apply</label>
+                                </div>
+                                
+                                <div class="switch-group">
+                                    <div class="switch checked">
+                                        <div class="switch-thumb"></div>
+                                    </div>
+                                    <label class="text-xs">Show Apply Button</label>
+                                </div>
+                                
+                                <div class="switch-group">
+                                    <div class="switch">
+                                        <div class="switch-thumb"></div>
+                                    </div>
+                                    <label class="text-xs">Include Blanks</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right: Info Panel -->
+                <div style="width: 200px;">
+                    <h4 class="text-xs font-semibold mb-2">FILTER INFO</h4>
+                    
+                    <div class="info-panel">
+                        <div class="info-row">
+                            <span class="info-label">Current Type:</span>
+                            <span class="info-value">Text Filter</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Enabled:</span>
+                            <span class="info-value">Yes</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Floating:</span>
+                            <span class="info-value">Yes</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Default Op:</span>
+                            <span class="info-value">Contains</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 p-3 bg-muted rounded">
+                        <p class="text-xs text-muted">
+                            Filters help users find specific data. Text filters are best for names and descriptions.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Multi Filter Configuration -->
+        <div class="bg-card border rounded-lg p-4 mb-4">
+            <h3 class="font-semibold mb-3">Multi Filter Configuration</h3>
+            
+            <div class="flex gap-4">
+                <div class="flex-1">
+                    <p class="text-xs text-muted mb-3">Combine multiple filter types for advanced filtering</p>
+                    
+                    <!-- Filter List -->
+                    <div class="mb-3">
+                        <div class="multi-filter-item">
+                            <div class="filter-type-icon">📝</div>
+                            <div class="flex-1">
+                                <p class="text-xs font-medium">Text Filter</p>
+                                <p class="text-xs text-muted">Default: Contains</p>
+                            </div>
+                            <button class="btn btn-icon text-xs">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="multi-filter-item">
+                            <div class="filter-type-icon">🔢</div>
+                            <div class="flex-1">
+                                <p class="text-xs font-medium">Number Filter</p>
+                                <p class="text-xs text-muted">Default: Greater than</p>
+                            </div>
+                            <button class="btn btn-icon text-xs">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button class="btn text-xs">+ Add Filter</button>
+                    
+                    <!-- Display Options -->
+                    <div class="mt-4">
+                        <label class="form-label text-xs">Display Mode</label>
+                        <div class="toggle-group">
+                            <button class="toggle-item active">Tabs</button>
+                            <button class="toggle-item">Submenu</button>
+                            <button class="toggle-item">Accordion</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="width: 200px;">
+                    <div class="preview-panel">
+                        <p class="preview-label">MULTI FILTER PREVIEW</p>
+                        <div style="font-size: 0.75rem;">
+                            <div class="mb-2">
+                                <div class="flex gap-1 mb-1">
+                                    <button class="btn text-xs active">Text</button>
+                                    <button class="btn text-xs">Number</button>
+                                </div>
+                                <input type="text" class="input w-full" placeholder="Filter...">
+                            </div>
+                            <p class="text-xs text-muted">Tab display mode</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filter Type Examples -->
+        <div class="bg-card border rounded-lg p-4">
+            <h3 class="font-semibold mb-3">Filter Type Examples</h3>
+            
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <h4 class="text-sm font-medium mb-2">Set Filter (Dropdown)</h4>
+                    <div class="filter-option-card">
+                        <div class="mb-2">
+                            <input type="text" class="input w-full" placeholder="Search...">
+                        </div>
+                        <div class="space-y-1" style="max-height: 150px; overflow-y: auto;">
+                            <label class="flex items-center gap-2 text-xs">
+                                <input type="checkbox" checked> (Select All)
+                            </label>
+                            <label class="flex items-center gap-2 text-xs">
+                                <input type="checkbox" checked> Active
+                            </label>
+                            <label class="flex items-center gap-2 text-xs">
+                                <input type="checkbox" checked> Pending
+                            </label>
+                            <label class="flex items-center gap-2 text-xs">
+                                <input type="checkbox"> Inactive
+                            </label>
+                            <label class="flex items-center gap-2 text-xs">
+                                <input type="checkbox" checked> Archived
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-sm font-medium mb-2">Date Filter</h4>
+                    <div class="filter-option-card">
+                        <select class="select w-full mb-2">
+                            <option>Equals</option>
+                            <option>After</option>
+                            <option>Before</option>
+                            <option>Between</option>
+                            <option>In range</option>
+                        </select>
+                        <input type="date" class="input w-full mb-2">
+                        <input type="date" class="input w-full" placeholder="To date">
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-sm font-medium mb-2">Number Filter</h4>
+                    <div class="filter-option-card">
+                        <select class="select w-full mb-2">
+                            <option>Equals</option>
+                            <option>Greater than</option>
+                            <option>Less than</option>
+                            <option>Between</option>
+                            <option>Not equals</option>
+                        </select>
+                        <input type="number" class="input w-full mb-2" placeholder="From">
+                        <input type="number" class="input w-full" placeholder="To">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleAdvanced() {
+            const content = document.getElementById('advanced-content');
+            content.style.display = content.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        function updateFilterOptions(type) {
+            console.log('Filter type changed to:', type);
+        }
+    </script>
+</body>
+</html>

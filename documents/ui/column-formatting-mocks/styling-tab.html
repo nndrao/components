@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Styling Tab - Column Formatting</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .style-toggle-item {
+            width: 32px;
+            height: 24px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .color-preset {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+        }
+        
+        .preview-cell {
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid var(--border);
+        }
+        
+        .preview-header {
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Styling Tab</h1>
+        <p class="text-muted mb-3">Typography, colors, borders, and alignment configuration</p>
+        
+        <!-- Main Styling Interface -->
+        <div class="bg-card border rounded-lg p-4">
+            <div class="flex gap-4">
+                <!-- Left: Controls -->
+                <div class="flex-1">
+                    <!-- Target Selection -->
+                    <div class="mb-3">
+                        <label class="form-label">Apply styles to:</label>
+                        <div class="toggle-group">
+                            <button class="toggle-item active">Cell</button>
+                            <button class="toggle-item">Header</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Typography Section -->
+                    <div class="mb-4">
+                        <h4 class="text-xs font-semibold mb-2">TYPOGRAPHY</h4>
+                        
+                        <!-- Row 1: Font family and size -->
+                        <div class="grid grid-cols-3 gap-2 mb-2">
+                            <div>
+                                <label class="form-label text-xs">Font Family</label>
+                                <select class="select w-full">
+                                    <option>Default</option>
+                                    <option>Arial</option>
+                                    <option>Helvetica</option>
+                                    <option>Times New Roman</option>
+                                    <option>Georgia</option>
+                                    <option>Courier New</option>
+                                    <option>Verdana</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label text-xs">Size</label>
+                                <select class="select w-full">
+                                    <option>10px</option>
+                                    <option>12px</option>
+                                    <option selected>14px</option>
+                                    <option>16px</option>
+                                    <option>18px</option>
+                                    <option>20px</option>
+                                    <option>24px</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label text-xs">Weight</label>
+                                <select class="select w-full">
+                                    <option>100 - Light</option>
+                                    <option>300 - Light</option>
+                                    <option selected>400 - Normal</option>
+                                    <option>500 - Medium</option>
+                                    <option>600 - Semibold</option>
+                                    <option>700 - Bold</option>
+                                    <option>900 - Black</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Row 2: Font style and alignment -->
+                        <div class="flex gap-2 mb-2">
+                            <div class="toggle-group">
+                                <button class="style-toggle-item toggle-item" title="Bold">
+                                    <strong>B</strong>
+                                </button>
+                                <button class="style-toggle-item toggle-item" title="Italic">
+                                    <em>I</em>
+                                </button>
+                                <button class="style-toggle-item toggle-item" title="Underline">
+                                    <u>U</u>
+                                </button>
+                                <button class="style-toggle-item toggle-item" title="Strikethrough">
+                                    <s>S</s>
+                                </button>
+                            </div>
+                            
+                            <div class="toggle-group">
+                                <button class="style-toggle-item toggle-item active" title="Align Left">◀</button>
+                                <button class="style-toggle-item toggle-item" title="Align Center">■</button>
+                                <button class="style-toggle-item toggle-item" title="Align Right">▶</button>
+                                <button class="style-toggle-item toggle-item" title="Justify">≡</button>
+                            </div>
+                            
+                            <div class="toggle-group">
+                                <button class="style-toggle-item toggle-item" title="Align Top">▲</button>
+                                <button class="style-toggle-item toggle-item active" title="Align Middle">■</button>
+                                <button class="style-toggle-item toggle-item" title="Align Bottom">▼</button>
+                                <button class="style-toggle-item toggle-item" title="Stretch">↕</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Colors Section -->
+                    <div class="mb-4">
+                        <h4 class="text-xs font-semibold mb-2">COLORS</h4>
+                        
+                        <div class="space-y-2">
+                            <!-- Text Color -->
+                            <div class="flex items-center gap-2">
+                                <div class="switch-group">
+                                    <div class="switch checked">
+                                        <div class="switch-thumb"></div>
+                                    </div>
+                                </div>
+                                <label class="text-xs" style="width: 80px;">Text Color</label>
+                                <div class="color-swatch" style="color: #374151;"></div>
+                                <input type="text" class="input" style="width: 80px;" value="#374151">
+                                <div class="flex gap-1">
+                                    <div class="color-preset" style="background: #EF4444;"></div>
+                                    <div class="color-preset" style="background: #F59E0B;"></div>
+                                    <div class="color-preset" style="background: #10B981;"></div>
+                                    <div class="color-preset" style="background: #3B82F6;"></div>
+                                    <div class="color-preset" style="background: #8B5CF6;"></div>
+                                    <div class="color-preset" style="background: #EC4899;"></div>
+                                    <div class="color-preset" style="background: #6B7280;"></div>
+                                    <div class="color-preset" style="background: #000000;"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Background Color -->
+                            <div class="flex items-center gap-2">
+                                <div class="switch-group">
+                                    <div class="switch">
+                                        <div class="switch-thumb"></div>
+                                    </div>
+                                </div>
+                                <label class="text-xs" style="width: 80px;">Background</label>
+                                <div class="color-swatch" style="color: transparent;"></div>
+                                <input type="text" class="input" style="width: 80px;" placeholder="None">
+                                <div class="flex gap-1">
+                                    <div class="color-preset" style="background: #FEE2E2;"></div>
+                                    <div class="color-preset" style="background: #FEF3C7;"></div>
+                                    <div class="color-preset" style="background: #D1FAE5;"></div>
+                                    <div class="color-preset" style="background: #DBEAFE;"></div>
+                                    <div class="color-preset" style="background: #EDE9FE;"></div>
+                                    <div class="color-preset" style="background: #FCE7F3;"></div>
+                                    <div class="color-preset" style="background: #F3F4F6;"></div>
+                                    <div class="color-preset" style="background: #FFFFFF;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Border Section -->
+                    <div class="mb-4">
+                        <h4 class="text-xs font-semibold mb-2">BORDER</h4>
+                        
+                        <div class="flex items-center gap-2">
+                            <div class="switch-group">
+                                <div class="switch checked">
+                                    <div class="switch-thumb"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="toggle-group">
+                                <button class="style-toggle-item toggle-item active" title="Top">─</button>
+                                <button class="style-toggle-item toggle-item active" title="Right">│</button>
+                                <button class="style-toggle-item toggle-item active" title="Bottom">─</button>
+                                <button class="style-toggle-item toggle-item active" title="Left">│</button>
+                            </div>
+                            
+                            <select class="select" style="width: 100px;">
+                                <option>solid</option>
+                                <option>dashed</option>
+                                <option>dotted</option>
+                                <option>double</option>
+                            </select>
+                            
+                            <select class="select" style="width: 60px;">
+                                <option>1px</option>
+                                <option>2px</option>
+                                <option>3px</option>
+                                <option>4px</option>
+                            </select>
+                            
+                            <div class="color-swatch" style="color: #D1D5DB;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Text Options -->
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="switch-group">
+                            <div class="switch">
+                                <div class="switch-thumb"></div>
+                            </div>
+                            <label class="text-xs">Wrap Text</label>
+                        </div>
+                        
+                        <div class="switch-group">
+                            <div class="switch">
+                                <div class="switch-thumb"></div>
+                            </div>
+                            <label class="text-xs">Auto Height</label>
+                        </div>
+                        
+                        <button class="btn text-xs" style="margin-left: auto;">Reset</button>
+                    </div>
+                </div>
+                
+                <!-- Right: Preview -->
+                <div style="width: 200px;">
+                    <h4 class="text-xs font-semibold mb-2">PREVIEW</h4>
+                    
+                    <div class="space-y-2">
+                        <div>
+                            <p class="text-xs text-muted mb-1">Cell Preview</p>
+                            <div class="preview-cell" style="font-family: Arial; font-size: 14px; color: #374151; border: 1px solid #D1D5DB;">
+                                Sample Text
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <p class="text-xs text-muted mb-1">Header Preview</p>
+                            <div class="preview-header" style="font-family: Arial; font-size: 14px;">
+                                Column Name
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-panel mt-4">
+                        <p class="text-xs text-muted">
+                            Styles will be applied to all selected columns. Use the target toggle to switch between cell and header styling.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Examples Section -->
+        <div class="bg-card border rounded-lg p-4 mt-4">
+            <h3 class="font-semibold mb-3">Common Style Combinations</h3>
+            
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <p class="text-xs font-medium mb-2">Status Indicators</p>
+                    <div class="space-y-2">
+                        <div class="preview-cell" style="background: #D1FAE5; color: #065F46; font-weight: 600;">
+                            Active
+                        </div>
+                        <div class="preview-cell" style="background: #FEF3C7; color: #92400E; font-weight: 600;">
+                            Pending
+                        </div>
+                        <div class="preview-cell" style="background: #FEE2E2; color: #991B1B; font-weight: 600;">
+                            Inactive
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <p class="text-xs font-medium mb-2">Numeric Values</p>
+                    <div class="space-y-2">
+                        <div class="preview-cell" style="text-align: right; font-family: 'Courier New';">
+                            1,234.56
+                        </div>
+                        <div class="preview-cell" style="text-align: right; color: #10B981; font-weight: 600;">
+                            +15.2%
+                        </div>
+                        <div class="preview-cell" style="text-align: right; color: #EF4444;">
+                            -234.00
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <p class="text-xs font-medium mb-2">Headers</p>
+                    <div class="space-y-2">
+                        <div class="preview-header" style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.05em;">
+                            Customer
+                        </div>
+                        <div class="preview-header" style="background: #3B82F6; color: white;">
+                            Total
+                        </div>
+                        <div class="preview-header" style="border-left: 4px solid #10B981;">
+                            Status
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

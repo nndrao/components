@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Column Formatting - Dark Mode</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: var(--background);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Column Formatting Dialog - Dark Mode</h1>
+        <p class="text-muted mb-3">Complete dialog shown in dark theme</p>
+        
+        <!-- Floating Ribbon Dialog -->
+        <div class="floating-ribbon" style="position: relative; margin: 2rem auto;">
+            <!-- Header Row -->
+            <div class="ribbon-header">
+                <span class="ribbon-title">Column Formatting</span>
+                
+                <div class="column-selector">
+                    <div class="column-selector-trigger">
+                        <span>Customer Name, Order Date +2</span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <span class="selected-count">4 selected</span>
+                </div>
+                
+                <div class="header-actions">
+                    <button class="btn btn-primary">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Apply
+                    </button>
+                    <button class="btn">Reset</button>
+                    <button class="btn">Clear Selected</button>
+                    <button class="btn btn-icon btn-close">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Tab Strip -->
+            <div class="ribbon-tabs">
+                <button class="ribbon-tab">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    General
+                </button>
+                <button class="ribbon-tab">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    Styling
+                </button>
+                <button class="ribbon-tab active">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <polyline points="12 2 12 12 12 22"></polyline>
+                    </svg>
+                    Format
+                </button>
+                <button class="ribbon-tab">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                    </svg>
+                    Filter
+                </button>
+                <button class="ribbon-tab">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 20h9"></path>
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                    </svg>
+                    Editor
+                </button>
+            </div>
+            
+            <!-- Content Area - Format Tab -->
+            <div class="ribbon-content">
+                <div class="flex gap-4">
+                    <!-- Left: Format Options -->
+                    <div class="flex-1">
+                        <!-- Format Mode Toggle -->
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="toggle-group">
+                                <button class="toggle-item">Standard</button>
+                                <button class="toggle-item active">Custom</button>
+                            </div>
+                            
+                            <div class="flex gap-2">
+                                <button class="btn text-xs">Clear</button>
+                                <button class="btn text-xs">Reset All</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Template Selection -->
+                        <div class="mb-3">
+                            <label class="form-label">Template Category</label>
+                            <select class="select w-full">
+                                <option selected>Status & Indicators</option>
+                                <option>Data Visualization</option>
+                                <option>Ratings & Scores</option>
+                                <option>Special Formats</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Template Grid -->
+                        <div class="grid grid-cols-3 gap-2 mb-4">
+                            <div class="template-card active" style="background: var(--primary); color: var(--primary-foreground); border-color: var(--primary);">
+                                <p class="text-xs font-medium">Temperature</p>
+                                <p class="text-xs" style="opacity: 0.9;">25°C 🌡️</p>
+                            </div>
+                            <div class="template-card">
+                                <p class="text-xs font-medium">Status Badge</p>
+                                <p class="text-xs text-muted">Colored indicators</p>
+                            </div>
+                            <div class="template-card">
+                                <p class="text-xs font-medium">Progress Bar</p>
+                                <p class="text-xs text-muted">Visual bars</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Format Configuration -->
+                        <div class="bg-muted rounded p-3">
+                            <h4 class="text-xs font-semibold mb-2">TEMPERATURE CONFIGURATION</h4>
+                            
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="form-label text-xs">Unit</label>
+                                    <select class="select w-full">
+                                        <option selected>Celsius (°C)</option>
+                                        <option>Fahrenheit (°F)</option>
+                                        <option>Kelvin (K)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label text-xs">Display</label>
+                                    <select class="select w-full">
+                                        <option>Value only</option>
+                                        <option selected>Value + Icon</option>
+                                        <option>Custom</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <div class="switch-group">
+                                    <div class="switch checked">
+                                        <div class="switch-thumb"></div>
+                                    </div>
+                                    <label class="text-xs">Enable temperature colors</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Preview -->
+                    <div style="width: 250px;">
+                        <h4 class="text-xs font-semibold mb-2">PREVIEW</h4>
+                        
+                        <div class="preview-panel">
+                            <div class="space-y-3">
+                                <div>
+                                    <p class="text-xs text-muted mb-1">Cold (< 0°C)</p>
+                                    <div class="preview-content" style="color: #3B82F6;">
+                                        -5°C ❄️
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-muted mb-1">Cool (0-15°C)</p>
+                                    <div class="preview-content" style="color: #10B981;">
+                                        10°C 🌤️
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-muted mb-1">Warm (16-25°C)</p>
+                                    <div class="preview-content" style="color: #F59E0B;">
+                                        22°C ☀️
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-muted mb-1">Hot (> 25°C)</p>
+                                    <div class="preview-content" style="color: #EF4444;">
+                                        32°C 🔥
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-panel mt-3">
+                            <p class="text-xs text-muted">
+                                Temperature formatting with automatic color coding and emoji indicators based on value ranges.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dark Mode Examples -->
+        <div class="bg-card border rounded-lg p-4 mt-4">
+            <h3 class="font-semibold mb-3">Dark Mode Color Examples</h3>
+            
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <h4 class="text-sm font-medium mb-2">Status Colors</h4>
+                    <div class="space-y-2">
+                        <div class="preview-content" style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 4px 12px; border-radius: 12px;">
+                            Active
+                        </div>
+                        <div class="preview-content" style="background: rgba(245, 158, 11, 0.2); color: #F59E0B; padding: 4px 12px; border-radius: 12px;">
+                            Pending
+                        </div>
+                        <div class="preview-content" style="background: rgba(239, 68, 68, 0.2); color: #EF4444; padding: 4px 12px; border-radius: 12px;">
+                            Error
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-sm font-medium mb-2">Numeric Formatting</h4>
+                    <div class="space-y-2">
+                        <div class="preview-content" style="color: #10B981; font-weight: 600;">
+                            +15.2%
+                        </div>
+                        <div class="preview-content" style="color: #EF4444;">
+                            -234.00
+                        </div>
+                        <div class="preview-content" style="color: #3B82F6;">
+                            $1,234.56
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-sm font-medium mb-2">UI Elements</h4>
+                    <div class="space-y-2">
+                        <button class="btn btn-primary w-full">Primary Action</button>
+                        <button class="btn w-full">Secondary Action</button>
+                        <div class="switch checked">
+                            <div class="switch-thumb"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Theme Toggle Demo -->
+        <div class="mt-4 text-center">
+            <button class="btn" onclick="document.documentElement.classList.toggle('dark')">
+                Toggle Light/Dark Mode
+            </button>
+        </div>
+    </div>
+</body>
+</html>

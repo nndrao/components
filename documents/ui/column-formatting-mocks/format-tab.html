@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Format Tab - Column Formatting</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .format-example {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 8px;
+            padding: 8px;
+            background: var(--muted);
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+        
+        .format-pattern {
+            font-family: 'Courier New', monospace;
+            color: var(--primary);
+        }
+        
+        .format-result {
+            color: var(--muted-foreground);
+        }
+        
+        .test-value-btn {
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            height: 24px;
+        }
+        
+        .template-card {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .template-card:hover {
+            border-color: var(--primary);
+            background: var(--accent);
+        }
+        
+        .template-card.active {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: var(--primary-foreground);
+        }
+        
+        .emoji-picker-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 4px;
+            padding: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .emoji-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--border);
+            background: var(--background);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.15s ease;
+        }
+        
+        .emoji-btn:hover {
+            background: var(--accent);
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Format Tab</h1>
+        <p class="text-muted mb-3">Number, date, and custom formatting with Excel-like syntax</p>
+        
+        <!-- Format Mode Toggle -->
+        <div class="bg-card border rounded-lg p-4 mb-4">
+            <div class="flex items-center justify-between mb-4">
+                <div class="toggle-group">
+                    <button class="toggle-item active">Standard</button>
+                    <button class="toggle-item">Custom</button>
+                </div>
+                
+                <div class="flex gap-2">
+                    <button class="btn text-xs">Clear</button>
+                    <button class="btn text-xs">Reset All</button>
+                </div>
+            </div>
+            
+            <!-- Standard Format Mode -->
+            <div id="standard-mode">
+                <div class="flex gap-4">
+                    <!-- Left: Format Options -->
+                    <div class="flex-1">
+                        <!-- Format Type -->
+                        <div class="mb-3">
+                            <label class="form-label">Format Type</label>
+                            <select class="select w-full" onchange="updateFormatOptions(this.value)">
+                                <option value="number" selected>Number</option>
+                                <option value="currency">Currency</option>
+                                <option value="percentage">Percentage</option>
+                                <option value="date">Date</option>
+                                <option value="text">Text</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Number Format Options -->
+                        <div id="number-options" class="space-y-3">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="form-label text-xs">Decimal Places</label>
+                                    <select class="select w-full">
+                                        <option>0</option>
+                                        <option>1</option>
+                                        <option selected>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                        <option>5</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label text-xs">Thousands Separator</label>
+                                    <div class="switch-group">
+                                        <div class="switch checked">
+                                            <div class="switch-thumb"></div>
+                                        </div>
+                                        <label class="text-xs">Use separator</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="form-label text-xs">Prefix</label>
+                                    <input type="text" class="input w-full" placeholder="e.g., $">
+                                </div>
+                                <div>
+                                    <label class="form-label text-xs">Suffix</label>
+                                    <input type="text" class="input w-full" placeholder="e.g., USD">
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <div class="switch-group">
+                                    <div class="switch checked">
+                                        <div class="switch-thumb"></div>
+                                    </div>
+                                    <label class="text-xs">Show negative numbers in red</label>
+                                </div>
+                                <div class="switch-group">
+                                    <div class="switch">
+                                        <div class="switch-thumb"></div>
+                                    </div>
+                                    <label class="text-xs">Show positive numbers in green</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Test Values -->
+                        <div class="mt-4">
+                            <label class="form-label text-xs">Test Values</label>
+                            <div class="flex gap-2 flex-wrap">
+                                <button class="btn test-value-btn">1234.56</button>
+                                <button class="btn test-value-btn">-1234.56</button>
+                                <button class="btn test-value-btn">0</button>
+                                <button class="btn test-value-btn">0.12345</button>
+                                <button class="btn test-value-btn">1234567.89</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Preview -->
+                    <div style="width: 250px;">
+                        <h4 class="text-xs font-semibold mb-2">PREVIEW</h4>
+                        
+                        <div class="preview-panel">
+                            <div class="mb-3">
+                                <p class="text-xs text-muted">Test Value</p>
+                                <p class="font-medium">1234.56</p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <p class="text-xs text-muted">Formatted Output</p>
+                                <p class="font-medium" style="font-size: 1.125rem;">1,234.56</p>
+                            </div>
+                            
+                            <div>
+                                <p class="text-xs text-muted">Format String</p>
+                                <p class="format-pattern">#,##0.00</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Format Guide Link -->
+                        <button class="btn text-xs w-full mt-3">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                            Format Guide
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Custom Format Mode -->
+        <div class="bg-card border rounded-lg p-4 mb-4">
+            <h3 class="font-semibold mb-3">Custom Format Mode</h3>
+            
+            <div class="flex gap-4">
+                <!-- Left: Template Selection -->
+                <div class="flex-1">
+                    <!-- Template Categories -->
+                    <div class="mb-3">
+                        <label class="form-label">Template Category</label>
+                        <select class="select w-full">
+                            <option>Status & Indicators</option>
+                            <option>Data Visualization</option>
+                            <option>Ratings & Scores</option>
+                            <option>Special Formats</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Template Grid -->
+                    <div class="grid grid-cols-2 gap-2 mb-4">
+                        <div class="template-card active">
+                            <p class="text-xs font-medium">Status Badge</p>
+                            <p class="text-xs text-muted">Colored status indicators</p>
+                        </div>
+                        <div class="template-card">
+                            <p class="text-xs font-medium">Progress Bar</p>
+                            <p class="text-xs text-muted">Visual percentage bars</p>
+                        </div>
+                        <div class="template-card">
+                            <p class="text-xs font-medium">Star Rating</p>
+                            <p class="text-xs text-muted">★★★☆☆ ratings</p>
+                        </div>
+                        <div class="template-card">
+                            <p class="text-xs font-medium">Temperature</p>
+                            <p class="text-xs text-muted">25°C with icons</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Manual Format String -->
+                    <div class="mb-3">
+                        <label class="form-label text-xs">Format String</label>
+                        <div class="flex gap-2">
+                            <input type="text" class="input flex-1" value="[Green]↑#,##0.00;[Red]↓#,##0.00">
+                            <button class="btn btn-icon" title="Insert Emoji">
+                                😀
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Template Configuration -->
+                    <div class="bg-muted rounded p-3">
+                        <h4 class="text-xs font-semibold mb-2">STATUS BADGE CONFIGURATION</h4>
+                        
+                        <div class="space-y-2">
+                            <div class="grid grid-cols-3 gap-2">
+                                <input type="text" class="input" value="active">
+                                <div class="color-swatch" style="color: #10B981;"></div>
+                                <input type="text" class="input" value="Active">
+                            </div>
+                            <div class="grid grid-cols-3 gap-2">
+                                <input type="text" class="input" value="pending">
+                                <div class="color-swatch" style="color: #F59E0B;"></div>
+                                <input type="text" class="input" value="Pending">
+                            </div>
+                            <div class="grid grid-cols-3 gap-2">
+                                <input type="text" class="input" value="inactive">
+                                <div class="color-swatch" style="color: #6B7280;"></div>
+                                <input type="text" class="input" value="Inactive">
+                            </div>
+                        </div>
+                        
+                        <button class="btn text-xs mt-2">+ Add Status</button>
+                    </div>
+                </div>
+                
+                <!-- Right: Examples and Preview -->
+                <div style="width: 250px;">
+                    <h4 class="text-xs font-semibold mb-2">TEMPLATE EXAMPLES</h4>
+                    
+                    <div class="space-y-2 mb-4">
+                        <div class="format-example">
+                            <span>Temperature</span>
+                            <span class="format-result">25°C 🌡️</span>
+                        </div>
+                        <div class="format-example">
+                            <span>Progress</span>
+                            <span class="format-result">▓▓▓▓▓░░░ 65%</span>
+                        </div>
+                        <div class="format-example">
+                            <span>Rating</span>
+                            <span class="format-result">★★★★☆ 4.2</span>
+                        </div>
+                        <div class="format-example">
+                            <span>Status</span>
+                            <span class="format-result">● Active</span>
+                        </div>
+                        <div class="format-example">
+                            <span>Trend</span>
+                            <span class="format-result">↑ +15.2%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-panel">
+                        <p class="preview-label">LIVE PREVIEW</p>
+                        <div class="preview-content" style="background: #D1FAE5; color: #065F46; padding: 4px 12px; border-radius: 12px; display: inline-block; font-weight: 600;">
+                            Active
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Format Guide -->
+        <div class="bg-card border rounded-lg p-4">
+            <h3 class="font-semibold mb-3">Excel Format Syntax Guide</h3>
+            
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <h4 class="text-sm font-medium mb-2">Number Formats</h4>
+                    <div class="space-y-1">
+                        <div class="format-example">
+                            <span class="format-pattern">0</span>
+                            <span class="format-result">1235</span>
+                        </div>
+                        <div class="format-example">
+                            <span class="format-pattern">0.00</span>
+                            <span class="format-result">1234.50</span>
+                        </div>
+                        <div class="format-example">
+                            <span class="format-pattern">#,##0</span>
+                            <span class="format-result">1,235</span>
+                        </div>
+                        <div class="format-example">
+                            <span class="format-pattern">$#,##0.00</span>
+                            <span class="format-result">$1,234.50</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-sm font-medium mb-2">Conditional Formats</h4>
+                    <div class="space-y-1">
+                        <div class="format-example">
+                            <span class="format-pattern">[Red]-0;[Green]+0</span>
+                            <span class="format-result">Colors</span>
+                        </div>
+                        <div class="format-example">
+                            <span class="format-pattern">[>100]"High";[<50]"Low"</span>
+                            <span class="format-result">Conditions</span>
+                        </div>
+                        <div class="format-example">
+                            <span class="format-pattern">0%;[Red]-0%</span>
+                            <span class="format-result">Percentage</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-sm font-medium mb-2">Text & Mixed</h4>
+                    <div class="space-y-1">
+                        <div class="format-example">
+                            <span class="format-pattern">"$"0" USD"</span>
+                            <span class="format-result">$100 USD</span>
+                        </div>
+                        <div class="format-example">
+                            <span class="format-pattern">0"°F"</span>
+                            <span class="format-result">72°F</span>
+                        </div>
+                        <div class="format-example">
+                            <span class="format-pattern">@" - Copy"</span>
+                            <span class="format-result">Text - Copy</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function updateFormatOptions(type) {
+            // This would dynamically show different options based on format type
+            console.log('Format type changed to:', type);
+        }
+    </script>
+</body>
+</html>

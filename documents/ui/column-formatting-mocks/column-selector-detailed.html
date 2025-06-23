@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Column Selector Panel - Detailed Mockup</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .column-selector-panel {
+            width: 320px;
+            background: var(--popover);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 10px 38px -10px rgba(0, 0, 0, 0.35), 0 10px 20px -15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .selector-header {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            background: var(--muted);
+        }
+        
+        .selector-body {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .selector-footer {
+            padding: 12px;
+            border-top: 1px solid var(--border);
+            background: var(--muted);
+        }
+        
+        .column-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            border-bottom: 1px solid var(--border);
+            gap: 8px;
+        }
+        
+        .column-item:hover {
+            background: var(--accent);
+        }
+        
+        .column-item.selected {
+            background: var(--primary);
+            color: var(--primary-foreground);
+        }
+        
+        .column-item.filtered-out {
+            opacity: 0.5;
+            display: none;
+        }
+        
+        .column-checkbox {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+        
+        .column-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .column-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .column-meta {
+            font-size: 0.75rem;
+            color: var(--muted-foreground);
+            display: flex;
+            gap: 8px;
+            margin-top: 2px;
+        }
+        
+        .column-type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 6px;
+            background: var(--secondary);
+            border-radius: 4px;
+            font-size: 0.625rem;
+            font-weight: 500;
+        }
+        
+        .column-status-icon {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 0.625rem;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            gap: 4px;
+            padding: 8px;
+            background: var(--muted);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .filter-tab {
+            flex: 1;
+            padding: 6px 12px;
+            border: none;
+            background: transparent;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--muted-foreground);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .filter-tab:hover {
+            background: var(--accent);
+            color: var(--foreground);
+        }
+        
+        .filter-tab.active {
+            background: var(--background);
+            color: var(--foreground);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .filter-content {
+            padding: 12px;
+            background: var(--muted);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .column-group {
+            margin-bottom: 16px;
+        }
+        
+        .column-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .group-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: var(--secondary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--muted-foreground);
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .group-header:hover {
+            background: var(--accent);
+        }
+        
+        .group-toggle {
+            transition: transform 0.2s ease;
+        }
+        
+        .group-header.collapsed .group-toggle {
+            transform: rotate(-90deg);
+        }
+        
+        .visibility-toggle {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: auto;
+            padding: 2px 6px;
+            background: var(--background);
+            border-radius: 4px;
+            font-size: 0.625rem;
+        }
+        
+        .column-actions {
+            display: flex;
+            gap: 4px;
+            margin-left: auto;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+        }
+        
+        .column-item:hover .column-actions {
+            opacity: 1;
+        }
+        
+        .action-btn {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: var(--secondary);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .action-btn:hover {
+            background: var(--accent);
+        }
+        
+        .quick-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 8px 12px;
+            background: var(--muted);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .quick-filter-chip {
+            padding: 4px 8px;
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 0.625rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .quick-filter-chip:hover {
+            border-color: var(--primary);
+        }
+        
+        .quick-filter-chip.active {
+            background: var(--primary);
+            color: var(--primary-foreground);
+            border-color: var(--primary);
+        }
+        
+        .selection-summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: var(--accent);
+            font-size: 0.75rem;
+        }
+        
+        .demo-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+        
+        .state-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Column Selector Panel - Detailed Mockup</h1>
+        <p class="text-muted mb-3">Comprehensive column selection interface with filtering, grouping, and actions</p>
+        
+        <!-- Main Column Selector Panel -->
+        <div class="column-selector-panel">
+            <!-- Header -->
+            <div class="selector-header">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-sm font-semibold">Select Columns</h3>
+                    <button class="btn btn-icon btn-close" style="width: 24px; height: 24px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Search -->
+                <div class="mb-2">
+                    <input type="text" class="input w-full" placeholder="Search columns..." style="padding-left: 28px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; left: 20px; top: 58px; opacity: 0.5;">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="flex gap-2">
+                    <button class="btn text-xs flex-1">Select All</button>
+                    <button class="btn text-xs flex-1">Clear All</button>
+                    <button class="btn text-xs">Invert</button>
+                </div>
+            </div>
+            
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <button class="filter-tab active">All</button>
+                <button class="filter-tab">Visible</button>
+                <button class="filter-tab">Hidden</button>
+                <button class="filter-tab">Modified</button>
+            </div>
+            
+            <!-- Quick Filters -->
+            <div class="quick-filters">
+                <div class="quick-filter-chip active">Text</div>
+                <div class="quick-filter-chip active">Number</div>
+                <div class="quick-filter-chip">Date</div>
+                <div class="quick-filter-chip">Boolean</div>
+                <div class="quick-filter-chip active">Has Format</div>
+                <div class="quick-filter-chip">Editable</div>
+                <div class="quick-filter-chip">Filtered</div>
+            </div>
+            
+            <!-- Selection Summary -->
+            <div class="selection-summary">
+                <span>12 of 45 columns selected</span>
+                <button class="text-xs text-primary">View selected only</button>
+            </div>
+            
+            <!-- Column List -->
+            <div class="selector-body">
+                <!-- Group: Customer Information -->
+                <div class="column-group">
+                    <div class="group-header">
+                        <span>Customer Information</span>
+                        <svg class="group-toggle" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="group-content">
+                        <div class="column-item selected">
+                            <input type="checkbox" class="column-checkbox" checked>
+                            <div class="column-info">
+                                <div class="column-name">Customer Name</div>
+                                <div class="column-meta">
+                                    <span class="column-type-badge">
+                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        </svg>
+                                        Text
+                                    </span>
+                                    <span>Width: 200px</span>
+                                </div>
+                            </div>
+                            <div class="column-actions">
+                                <button class="action-btn" title="Pin column">
+                                    📌
+                                </button>
+                                <button class="action-btn" title="Hide column">
+                                    👁️
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="column-item">
+                            <input type="checkbox" class="column-checkbox">
+                            <div class="column-info">
+                                <div class="column-name">Customer ID</div>
+                                <div class="column-meta">
+                                    <span class="column-type-badge">
+                                        🔢 Number
+                                    </span>
+                                    <span>Hidden</span>
+                                </div>
+                            </div>
+                            <div class="column-status-icon" style="background: var(--muted); color: var(--muted-foreground);">
+                                👁️‍🗨️
+                            </div>
+                        </div>
+                        
+                        <div class="column-item selected">
+                            <input type="checkbox" class="column-checkbox" checked>
+                            <div class="column-info">
+                                <div class="column-name">Email Address</div>
+                                <div class="column-meta">
+                                    <span class="column-type-badge">
+                                        📧 Email
+                                    </span>
+                                    <span>Formatted</span>
+                                </div>
+                            </div>
+                            <div class="column-status-icon" style="background: var(--primary); color: var(--primary-foreground);">
+                                ✨
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Group: Order Details -->
+                <div class="column-group">
+                    <div class="group-header">
+                        <span>Order Details</span>
+                        <div class="visibility-toggle">
+                            <span>5 visible</span>
+                        </div>
+                    </div>
+                    <div class="group-content">
+                        <div class="column-item selected">
+                            <input type="checkbox" class="column-checkbox" checked>
+                            <div class="column-info">
+                                <div class="column-name">Order Date</div>
+                                <div class="column-meta">
+                                    <span class="column-type-badge">
+                                        📅 Date
+                                    </span>
+                                    <span>Filtered</span>
+                                    <span>Sorted ↓</span>
+                                </div>
+                            </div>
+                            <div class="column-status-icon" style="background: var(--accent);">
+                                🔽
+                            </div>
+                        </div>
+                        
+                        <div class="column-item selected">
+                            <input type="checkbox" class="column-checkbox" checked>
+                            <div class="column-info">
+                                <div class="column-name">Total Amount</div>
+                                <div class="column-meta">
+                                    <span class="column-type-badge">
+                                        💰 Currency
+                                    </span>
+                                    <span>Formatted</span>
+                                    <span>Pinned →</span>
+                                </div>
+                            </div>
+                            <div class="column-status-icon" style="background: var(--primary); color: var(--primary-foreground);">
+                                📌
+                            </div>
+                        </div>
+                        
+                        <div class="column-item">
+                            <input type="checkbox" class="column-checkbox">
+                            <div class="column-info">
+                                <div class="column-name">Order Status</div>
+                                <div class="column-meta">
+                                    <span class="column-type-badge">
+                                        🏷️ Status
+                                    </span>
+                                    <span>Editable</span>
+                                </div>
+                            </div>
+                            <div class="column-status-icon" style="background: var(--secondary);">
+                                ✏️
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Group: Metrics -->
+                <div class="column-group">
+                    <div class="group-header collapsed">
+                        <span>Metrics & Calculations</span>
+                        <svg class="group-toggle" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="selector-footer">
+                <div class="flex items-center justify-between">
+                    <button class="btn text-xs">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 11H3v10h6V11zm0 0V3h6v8h-6zm0 0h6v10h-6V11zm12 0h-6v10h6V11z"></path>
+                        </svg>
+                        Manage Groups
+                    </button>
+                    <div class="flex gap-2">
+                        <button class="btn">Cancel</button>
+                        <button class="btn btn-primary">Apply Selection</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Different States Demo -->
+        <div class="demo-section">
+            <h2 class="font-semibold mb-3">Column Item States & Variations</h2>
+            
+            <div class="state-grid">
+                <!-- State Examples -->
+                <div>
+                    <h3 class="text-sm font-medium mb-2">Selection States</h3>
+                    <div class="column-selector-panel" style="width: 100%;">
+                        <div class="column-item">
+                            <input type="checkbox" class="column-checkbox">
+                            <div class="column-info">
+                                <div class="column-name">Unselected Column</div>
+                                <div class="column-meta">
+                                    <span class="column-type-badge">Text</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="column-item selected">
+                            <input type="checkbox" class="column-checkbox" checked>
+                            <div class="column-info">
+                                <div class="column-name">Selected Column</div>
+                                <div class="column-meta">
+                                    <span class="column-type-badge">Number</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="column-item" style="background: var(--accent);">
+                            <input type="checkbox" class="column-checkbox" style="opacity: 0.5;" checked>
+                            <div class="column-info">
+                                <div class="column-name">Partially Selected (Group)</div>
+                                <div class="column-meta">
+                                    <span class="column-type-badge">Mixed</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Status Indicators -->
+                <div>
+                    <h3 class="text-sm font-medium mb-2">Status Indicators</h3>
+                    <div class="column-selector-panel" style="width: 100%;">
+                        <div class="column-item">
+                            <input type="checkbox" class="column-checkbox">
+                            <div class="column-info">
+                                <div class="column-name">Formatted Column</div>
+                                <div class="column-meta">
+                                    <span class="column-type-badge">💰 Currency</span>
+                                    <span>$#,##0.00</span>
+                                </div>
+                            </div>
+                            <div class="column-status-icon" style="background: var(--primary); color: var(--primary-foreground);">
+                                ✨
+                            </div>
+                        </div>
+                        
+                        <div class="column-item">
+                            <input type="checkbox" class="column-checkbox">
+                            <div class="column-info">
+                                <div class="column-name">Hidden Column</div>
+                                <div class="column-meta">
+                                    <span class="column-type-badge">Text</span>
+                                </div>
+                            </div>
+                            <div class="column-status-icon" style="background: var(--muted);">
+                                👁️‍🗨️
+                            </div>
+                        </div>
+                        
+                        <div class="column-item">
+                            <input type="checkbox" class="column-checkbox">
+                            <div class="column-info">
+                                <div class="column-name">Pinned Column</div>
+                                <div class="column-meta">
+                                    <span class="column-type-badge">ID</span>
+                                    <span>Pinned Left</span>
+                                </div>
+                            </div>
+                            <div class="column-status-icon" style="background: var(--accent);">
+                                📌
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filter Examples -->
+        <div class="demo-section">
+            <h2 class="font-semibold mb-3">Filter & Search Examples</h2>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <!-- Text Search Results -->
+                <div>
+                    <h3 class="text-sm font-medium mb-2">Search: "customer"</h3>
+                    <div class="column-selector-panel" style="width: 100%;">
+                        <div class="selector-body" style="max-height: 200px;">
+                            <div class="column-item">
+                                <input type="checkbox" class="column-checkbox">
+                                <div class="column-info">
+                                    <div class="column-name">
+                                        <span style="background: var(--primary); color: var(--primary-foreground); padding: 0 2px;">Customer</span> Name
+                                    </div>
+                                    <div class="column-meta">
+                                        <span class="column-type-badge">Text</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column-item">
+                                <input type="checkbox" class="column-checkbox">
+                                <div class="column-info">
+                                    <div class="column-name">
+                                        <span style="background: var(--primary); color: var(--primary-foreground); padding: 0 2px;">Customer</span> ID
+                                    </div>
+                                    <div class="column-meta">
+                                        <span class="column-type-badge">Number</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 text-center text-xs text-muted">
+                            2 columns match "customer"
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Type Filter -->
+                <div>
+                    <h3 class="text-sm font-medium mb-2">Filter: Number Columns Only</h3>
+                    <div class="column-selector-panel" style="width: 100%;">
+                        <div class="selector-body" style="max-height: 200px;">
+                            <div class="column-item">
+                                <input type="checkbox" class="column-checkbox">
+                                <div class="column-info">
+                                    <div class="column-name">Order ID</div>
+                                    <div class="column-meta">
+                                        <span class="column-type-badge">🔢 Number</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column-item">
+                                <input type="checkbox" class="column-checkbox">
+                                <div class="column-info">
+                                    <div class="column-name">Total Amount</div>
+                                    <div class="column-meta">
+                                        <span class="column-type-badge">💰 Currency</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column-item">
+                                <input type="checkbox" class="column-checkbox">
+                                <div class="column-info">
+                                    <div class="column-name">Quantity</div>
+                                    <div class="column-meta">
+                                        <span class="column-type-badge">🔢 Number</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Advanced Features -->
+        <div class="demo-section">
+            <h2 class="font-semibold mb-3">Advanced Features</h2>
+            
+            <div class="grid grid-cols-3 gap-4">
+                <!-- Bulk Actions -->
+                <div>
+                    <h3 class="text-sm font-medium mb-2">Bulk Actions Menu</h3>
+                    <div class="dropdown-content" style="position: static;">
+                        <div class="dropdown-item">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                                <line x1="9" y1="15" x2="15" y2="9"></line>
+                            </svg>
+                            Hide Selected
+                        </div>
+                        <div class="dropdown-item">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            Show Selected Only
+                        </div>
+                        <div class="dropdown-item">
+                            📌 Pin Selected Left
+                        </div>
+                        <div class="dropdown-item">
+                            ✨ Apply Format to Selected
+                        </div>
+                        <div class="dropdown-item">
+                            🔒 Lock Selected
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Column Reordering -->
+                <div>
+                    <h3 class="text-sm font-medium mb-2">Drag to Reorder</h3>
+                    <div class="column-selector-panel" style="width: 100%;">
+                        <div class="column-item" style="cursor: move; background: var(--accent);">
+                            <div style="width: 20px; color: var(--muted-foreground);">⋮⋮</div>
+                            <input type="checkbox" class="column-checkbox">
+                            <div class="column-info">
+                                <div class="column-name">Dragging Column</div>
+                                <div class="column-meta">
+                                    <span>Drop to reorder</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="height: 2px; background: var(--primary); margin: 4px 0;"></div>
+                        <div class="column-item">
+                            <div style="width: 20px; color: var(--muted-foreground);">⋮⋮</div>
+                            <input type="checkbox" class="column-checkbox">
+                            <div class="column-info">
+                                <div class="column-name">Target Position</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Context Menu -->
+                <div>
+                    <h3 class="text-sm font-medium mb-2">Right-Click Context Menu</h3>
+                    <div class="dropdown-content" style="position: static;">
+                        <div class="dropdown-item">Copy Column Name</div>
+                        <div class="dropdown-item">Copy Column ID</div>
+                        <div style="height: 1px; background: var(--border); margin: 4px 0;"></div>
+                        <div class="dropdown-item">Format Column...</div>
+                        <div class="dropdown-item">Edit Properties...</div>
+                        <div style="height: 1px; background: var(--border); margin: 4px 0;"></div>
+                        <div class="dropdown-item">Pin Left</div>
+                        <div class="dropdown-item">Pin Right</div>
+                        <div class="dropdown-item">Unpin</div>
+                        <div style="height: 1px; background: var(--border); margin: 4px 0;"></div>
+                        <div class="dropdown-item" style="color: var(--destructive);">Remove Column</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

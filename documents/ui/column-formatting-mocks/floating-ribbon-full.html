@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Column Formatting - Full Dialog</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Column Formatting Dialog - Full Mockup</h1>
+        <p class="text-muted mb-3">Complete floating ribbon UI with General tab active</p>
+        
+        <!-- Floating Ribbon Dialog -->
+        <div class="floating-ribbon" style="position: relative; margin: 2rem auto;">
+            <!-- Header Row -->
+            <div class="ribbon-header">
+                <span class="ribbon-title">Column Formatting</span>
+                
+                <div class="column-selector">
+                    <div class="column-selector-trigger">
+                        <span>Select columns...</span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <span class="selected-count">3 selected</span>
+                </div>
+                
+                <div class="header-actions">
+                    <button class="btn btn-primary">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Apply
+                    </button>
+                    <button class="btn">Reset</button>
+                    <button class="btn">Clear Selected</button>
+                    <button class="btn btn-icon btn-close">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Tab Strip -->
+            <div class="ribbon-tabs">
+                <button class="ribbon-tab active">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    General
+                </button>
+                <button class="ribbon-tab">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    Styling
+                </button>
+                <button class="ribbon-tab">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <polyline points="12 2 12 12 12 22"></polyline>
+                    </svg>
+                    Format
+                </button>
+                <button class="ribbon-tab">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                    </svg>
+                    Filter
+                </button>
+                <button class="ribbon-tab">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 20h9"></path>
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                    </svg>
+                    Editor
+                </button>
+            </div>
+            
+            <!-- Content Area - General Tab -->
+            <div class="ribbon-content">
+                <!-- Row 1: Header name and type -->
+                <div class="form-row">
+                    <div class="flex-1">
+                        <label class="form-label">Header Name</label>
+                        <input type="text" class="input w-full" placeholder="Mixed values" disabled>
+                    </div>
+                    <div style="width: 200px;">
+                        <label class="form-label">Column Type</label>
+                        <select class="select w-full">
+                            <option>Text</option>
+                            <option>Numeric</option>
+                            <option>Date</option>
+                            <option>Boolean</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Row 2: Quick toggles -->
+                <div class="bg-muted rounded p-3 mt-3">
+                    <div class="flex items-center gap-4">
+                        <div class="switch-group">
+                            <div class="switch checked">
+                                <div class="switch-thumb"></div>
+                            </div>
+                            <label class="text-xs">Floating Filter</label>
+                        </div>
+                        
+                        <div class="switch-group">
+                            <div class="switch checked">
+                                <div class="switch-thumb"></div>
+                            </div>
+                            <label class="text-xs">Enable Filter</label>
+                        </div>
+                        
+                        <div class="switch-group">
+                            <div class="switch">
+                                <div class="switch-thumb"></div>
+                            </div>
+                            <label class="text-xs">Editable</label>
+                        </div>
+                        
+                        <button class="btn text-xs" style="margin-left: auto;">Advanced Settings</button>
+                    </div>
+                </div>
+                
+                <!-- Info message -->
+                <div class="info-panel mt-4">
+                    <p class="text-xs text-muted">
+                        <strong>3 columns selected:</strong> Customer Name, Order Date, Total Amount
+                    </p>
+                    <p class="text-xs text-muted mt-2">
+                        Changes will be applied to all selected columns. Some options may show "Mixed" when columns have different values.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Notes -->
+        <div class="mt-4 p-4 bg-muted rounded">
+            <h3 class="font-semibold mb-2">Implementation Notes</h3>
+            <ul class="text-sm text-muted" style="list-style: disc; padding-left: 1.5rem;">
+                <li>Dialog is draggable from the header area</li>
+                <li>Multi-column selection shows mixed values appropriately</li>
+                <li>Apply button is highlighted when there are pending changes</li>
+                <li>Tab content changes dynamically based on selection</li>
+                <li>Dialog remembers position between sessions</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

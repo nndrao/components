@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataTable Design System</title>
+    <style>
+        /* Design System Root Variables */
+        :root {
+            /* Base Colors - Light Mode */
+            --dt-background: hsl(0 0% 100%);
+            --dt-foreground: hsl(222.2 84% 4.9%);
+            
+            /* Card & Popover */
+            --dt-card: hsl(0 0% 100%);
+            --dt-card-foreground: hsl(222.2 84% 4.9%);
+            --dt-popover: hsl(0 0% 100%);
+            --dt-popover-foreground: hsl(222.2 84% 4.9%);
+            
+            /* Primary */
+            --dt-primary: hsl(222.2 47.4% 11.2%);
+            --dt-primary-foreground: hsl(210 40% 98%);
+            
+            /* Secondary */
+            --dt-secondary: hsl(210 40% 96.1%);
+            --dt-secondary-foreground: hsl(222.2 47.4% 11.2%);
+            
+            /* Muted */
+            --dt-muted: hsl(210 40% 96.1%);
+            --dt-muted-foreground: hsl(215.4 16.3% 46.9%);
+            
+            /* Accent */
+            --dt-accent: hsl(210 40% 96.1%);
+            --dt-accent-foreground: hsl(222.2 47.4% 11.2%);
+            
+            /* Destructive */
+            --dt-destructive: hsl(0 84.2% 60.2%);
+            --dt-destructive-foreground: hsl(210 40% 98%);
+            
+            /* Borders */
+            --dt-border: hsl(214.3 31.8% 91.4%);
+            --dt-input: hsl(214.3 31.8% 91.4%);
+            --dt-ring: hsl(222.2 84% 4.9%);
+            
+            /* DataTable Specific */
+            --dt-header-bg: hsl(210 40% 98%);
+            --dt-row-hover: hsl(210 40% 98%);
+            --dt-row-selected: hsl(210 40% 96%);
+            --dt-row-stripe: hsl(210 40% 98.5%);
+            
+            /* Spacing System */
+            --dt-spacing-xs: 4px;
+            --dt-spacing-sm: 8px;
+            --dt-spacing-md: 12px;
+            --dt-spacing-lg: 16px;
+            --dt-spacing-xl: 24px;
+            --dt-spacing-2xl: 32px;
+            
+            /* Border Radius */
+            --dt-radius-sm: 4px;
+            --dt-radius-md: 6px;
+            --dt-radius-lg: 8px;
+            --dt-radius-xl: 12px;
+            --dt-radius-full: 9999px;
+            
+            /* Font Sizes */
+            --dt-text-xs: 0.75rem;    /* 12px */
+            --dt-text-sm: 0.875rem;   /* 14px */
+            --dt-text-base: 1rem;     /* 16px */
+            --dt-text-lg: 1.125rem;   /* 18px */
+            --dt-text-xl: 1.25rem;    /* 20px */
+            
+            /* Component Heights */
+            --dt-height-input: 32px;
+            --dt-height-button: 32px;
+            --dt-height-button-sm: 28px;
+            --dt-height-button-xs: 24px;
+            --dt-height-row: 40px;
+            --dt-height-header: 48px;
+            
+            /* Shadows */
+            --dt-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --dt-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --dt-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --dt-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+            
+            /* Transitions */
+            --dt-transition-fast: 150ms ease;
+            --dt-transition-base: 200ms ease;
+            --dt-transition-slow: 300ms ease;
+        }
+        
+        /* Dark Mode */
+        .dark {
+            --dt-background: hsl(222.2 84% 4.9%);
+            --dt-foreground: hsl(210 40% 98%);
+            
+            --dt-card: hsl(222.2 84% 4.9%);
+            --dt-card-foreground: hsl(210 40% 98%);
+            --dt-popover: hsl(222.2 84% 4.9%);
+            --dt-popover-foreground: hsl(210 40% 98%);
+            
+            --dt-primary: hsl(210 40% 98%);
+            --dt-primary-foreground: hsl(222.2 47.4% 11.2%);
+            
+            --dt-secondary: hsl(217.2 32.6% 17.5%);
+            --dt-secondary-foreground: hsl(210 40% 98%);
+            
+            --dt-muted: hsl(217.2 32.6% 17.5%);
+            --dt-muted-foreground: hsl(215 20.2% 65.1%);
+            
+            --dt-accent: hsl(217.2 32.6% 17.5%);
+            --dt-accent-foreground: hsl(210 40% 98%);
+            
+            --dt-destructive: hsl(0 62.8% 30.6%);
+            --dt-destructive-foreground: hsl(210 40% 98%);
+            
+            --dt-border: hsl(217.2 32.6% 17.5%);
+            --dt-input: hsl(217.2 32.6% 17.5%);
+            --dt-ring: hsl(212.7 26.8% 83.9%);
+            
+            /* DataTable Specific - Dark */
+            --dt-header-bg: hsl(217.2 32.6% 12%);
+            --dt-row-hover: hsl(217.2 32.6% 15%);
+            --dt-row-selected: hsl(217.2 32.6% 20%);
+            --dt-row-stripe: hsl(217.2 32.6% 8%);
+        }
+        
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--dt-background);
+            color: var(--dt-foreground);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Container */
+        .design-system-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--dt-spacing-2xl);
+        }
+        
+        /* Section Styles */
+        .section {
+            margin-bottom: var(--dt-spacing-2xl);
+            padding: var(--dt-spacing-xl);
+            background: var(--dt-card);
+            border: 1px solid var(--dt-border);
+            border-radius: var(--dt-radius-lg);
+        }
+        
+        .section-title {
+            font-size: var(--dt-text-xl);
+            font-weight: 600;
+            margin-bottom: var(--dt-spacing-lg);
+            color: var(--dt-foreground);
+        }
+        
+        .subsection {
+            margin-bottom: var(--dt-spacing-xl);
+        }
+        
+        .subsection-title {
+            font-size: var(--dt-text-lg);
+            font-weight: 500;
+            margin-bottom: var(--dt-spacing-md);
+            color: var(--dt-foreground);
+        }
+        
+        /* Grid Layouts */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--dt-spacing-md);
+            margin-bottom: var(--dt-spacing-lg);
+        }
+        
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--dt-spacing-lg);
+        }
+        
+        /* Color Swatch */
+        .color-swatch {
+            border-radius: var(--dt-radius-md);
+            overflow: hidden;
+            border: 1px solid var(--dt-border);
+        }
+        
+        .color-swatch-preview {
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            font-size: var(--dt-text-sm);
+        }
+        
+        .color-swatch-info {
+            padding: var(--dt-spacing-sm);
+            background: var(--dt-background);
+            font-size: var(--dt-text-xs);
+        }
+        
+        .color-swatch-name {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        
+        .color-swatch-value {
+            color: var(--dt-muted-foreground);
+            font-family: monospace;
+        }
+        
+        /* Component Examples */
+        .component-example {
+            padding: var(--dt-spacing-lg);
+            background: var(--dt-muted);
+            border-radius: var(--dt-radius-md);
+            margin-bottom: var(--dt-spacing-md);
+        }
+        
+        .component-label {
+            font-size: var(--dt-text-sm);
+            font-weight: 500;
+            margin-bottom: var(--dt-spacing-sm);
+            color: var(--dt-muted-foreground);
+        }
+        
+        /* Button Styles */
+        .dt-button {
+            height: var(--dt-height-button);
+            padding: 0 var(--dt-spacing-lg);
+            border-radius: var(--dt-radius-md);
+            font-size: var(--dt-text-sm);
+            font-weight: 500;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all var(--dt-transition-fast);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--dt-spacing-sm);
+            outline: none;
+        }
+        
+        .dt-button:focus-visible {
+            outline: 2px solid var(--dt-ring);
+            outline-offset: 2px;
+        }
+        
+        .dt-button-primary {
+            background: var(--dt-primary);
+            color: var(--dt-primary-foreground);
+        }
+        
+        .dt-button-primary:hover {
+            opacity: 0.9;
+        }
+        
+        .dt-button-secondary {
+            background: var(--dt-secondary);
+            color: var(--dt-secondary-foreground);
+            border-color: var(--dt-border);
+        }
+        
+        .dt-button-secondary:hover {
+            background: var(--dt-accent);
+        }
+        
+        .dt-button-outline {
+            background: transparent;
+            border-color: var(--dt-input);
+            color: var(--dt-foreground);
+        }
+        
+        .dt-button-outline:hover {
+            background: var(--dt-accent);
+            border-color: var(--dt-accent);
+        }
+        
+        .dt-button-ghost {
+            background: transparent;
+            color: var(--dt-foreground);
+        }
+        
+        .dt-button-ghost:hover {
+            background: var(--dt-accent);
+        }
+        
+        .dt-button-destructive {
+            background: var(--dt-destructive);
+            color: var(--dt-destructive-foreground);
+        }
+        
+        .dt-button-sm {
+            height: var(--dt-height-button-sm);
+            padding: 0 var(--dt-spacing-md);
+            font-size: var(--dt-text-xs);
+        }
+        
+        .dt-button-xs {
+            height: var(--dt-height-button-xs);
+            padding: 0 var(--dt-spacing-sm);
+            font-size: var(--dt-text-xs);
+        }
+        
+        .dt-button-icon {
+            width: var(--dt-height-button);
+            padding: 0;
+            justify-content: center;
+        }
+        
+        /* Input Styles */
+        .dt-input {
+            height: var(--dt-height-input);
+            padding: 0 var(--dt-spacing-md);
+            background: var(--dt-background);
+            border: 1px solid var(--dt-input);
+            border-radius: var(--dt-radius-md);
+            font-size: var(--dt-text-sm);
+            color: var(--dt-foreground);
+            transition: border-color var(--dt-transition-fast);
+            outline: none;
+        }
+        
+        .dt-input:focus {
+            border-color: var(--dt-ring);
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .dt-input::placeholder {
+            color: var(--dt-muted-foreground);
+        }
+        
+        /* Select Styles */
+        .dt-select {
+            height: var(--dt-height-input);
+            padding: 0 var(--dt-spacing-2xl) 0 var(--dt-spacing-md);
+            background: var(--dt-background);
+            border: 1px solid var(--dt-input);
+            border-radius: var(--dt-radius-md);
+            font-size: var(--dt-text-sm);
+            color: var(--dt-foreground);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right var(--dt-spacing-sm) center;
+            cursor: pointer;
+        }
+        
+        /* DataTable Styles */
+        .dt-table {
+            width: 100%;
+            background: var(--dt-card);
+            border: 1px solid var(--dt-border);
+            border-radius: var(--dt-radius-lg);
+            overflow: hidden;
+        }
+        
+        .dt-header {
+            height: var(--dt-height-header);
+            background: var(--dt-header-bg);
+            border-bottom: 1px solid var(--dt-border);
+            display: flex;
+            align-items: center;
+            padding: 0 var(--dt-spacing-lg);
+            font-weight: 600;
+            font-size: var(--dt-text-sm);
+        }
+        
+        .dt-row {
+            height: var(--dt-height-row);
+            border-bottom: 1px solid var(--dt-border);
+            display: flex;
+            align-items: center;
+            padding: 0 var(--dt-spacing-lg);
+            transition: background var(--dt-transition-fast);
+        }
+        
+        .dt-row:hover {
+            background: var(--dt-row-hover);
+        }
+        
+        .dt-row:nth-child(even) {
+            background: var(--dt-row-stripe);
+        }
+        
+        .dt-row.selected {
+            background: var(--dt-row-selected);
+        }
+        
+        .dt-cell {
+            flex: 1;
+            padding: 0 var(--dt-spacing-sm);
+            font-size: var(--dt-text-sm);
+            color: var(--dt-foreground);
+        }
+        
+        /* Badge Styles */
+        .dt-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: var(--dt-radius-full);
+            font-size: var(--dt-text-xs);
+            font-weight: 500;
+            line-height: 1;
+        }
+        
+        .dt-badge-primary {
+            background: var(--dt-primary);
+            color: var(--dt-primary-foreground);
+        }
+        
+        .dt-badge-secondary {
+            background: var(--dt-secondary);
+            color: var(--dt-secondary-foreground);
+        }
+        
+        .dt-badge-success {
+            background: hsl(142 76% 36%);
+            color: white;
+        }
+        
+        .dt-badge-warning {
+            background: hsl(38 92% 50%);
+            color: white;
+        }
+        
+        .dt-badge-destructive {
+            background: var(--dt-destructive);
+            color: var(--dt-destructive-foreground);
+        }
+        
+        /* Dialog Styles */
+        .dt-dialog {
+            background: var(--dt-popover);
+            border: 1px solid var(--dt-border);
+            border-radius: var(--dt-radius-lg);
+            box-shadow: var(--dt-shadow-xl);
+            overflow: hidden;
+        }
+        
+        .dt-dialog-header {
+            padding: var(--dt-spacing-lg);
+            border-bottom: 1px solid var(--dt-border);
+            background: var(--dt-muted);
+        }
+        
+        .dt-dialog-title {
+            font-size: var(--dt-text-lg);
+            font-weight: 600;
+            color: var(--dt-foreground);
+        }
+        
+        .dt-dialog-content {
+            padding: var(--dt-spacing-lg);
+        }
+        
+        .dt-dialog-footer {
+            padding: var(--dt-spacing-lg);
+            border-top: 1px solid var(--dt-border);
+            background: var(--dt-muted);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--dt-spacing-sm);
+        }
+        
+        /* Tab Styles */
+        .dt-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--dt-border);
+            background: var(--dt-muted);
+        }
+        
+        .dt-tab {
+            padding: var(--dt-spacing-sm) var(--dt-spacing-lg);
+            font-size: var(--dt-text-sm);
+            font-weight: 500;
+            color: var(--dt-muted-foreground);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: all var(--dt-transition-fast);
+        }
+        
+        .dt-tab:hover {
+            color: var(--dt-foreground);
+            background: var(--dt-accent);
+        }
+        
+        .dt-tab.active {
+            color: var(--dt-primary);
+            background: var(--dt-background);
+        }
+        
+        .dt-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--dt-primary);
+        }
+        
+        /* Switch Styles */
+        .dt-switch {
+            width: 40px;
+            height: 20px;
+            background: var(--dt-muted);
+            border-radius: var(--dt-radius-full);
+            position: relative;
+            cursor: pointer;
+            transition: background var(--dt-transition-fast);
+        }
+        
+        .dt-switch.checked {
+            background: var(--dt-primary);
+        }
+        
+        .dt-switch-thumb {
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform var(--dt-transition-fast);
+            box-shadow: var(--dt-shadow-sm);
+        }
+        
+        .dt-switch.checked .dt-switch-thumb {
+            transform: translateX(20px);
+        }
+        
+        /* Utility Classes */
+        .dt-text-xs { font-size: var(--dt-text-xs); }
+        .dt-text-sm { font-size: var(--dt-text-sm); }
+        .dt-text-base { font-size: var(--dt-text-base); }
+        .dt-text-lg { font-size: var(--dt-text-lg); }
+        .dt-text-xl { font-size: var(--dt-text-xl); }
+        
+        .dt-font-normal { font-weight: 400; }
+        .dt-font-medium { font-weight: 500; }
+        .dt-font-semibold { font-weight: 600; }
+        .dt-font-bold { font-weight: 700; }
+        
+        .dt-text-muted { color: var(--dt-muted-foreground); }
+        .dt-text-primary { color: var(--dt-primary); }
+        .dt-text-destructive { color: var(--dt-destructive); }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle">
+        <button class="dt-button dt-button-secondary" onclick="document.documentElement.classList.toggle('dark')">
+            Toggle Dark Mode
+        </button>
+    </div>
+    
+    <div class="design-system-container">
+        <h1 style="font-size: 2.5rem; font-weight: 700; margin-bottom: var(--dt-spacing-xl);">
+            DataTable Design System
+        </h1>
+        <p style="font-size: var(--dt-text-lg); color: var(--dt-muted-foreground); margin-bottom: var(--dt-spacing-2xl);">
+            A comprehensive design system for DataTable components based on shadcn/ui principles
+        </p>
+        
+        <!-- Color System -->
+        <div class="section">
+            <h2 class="section-title">Color System</h2>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">Core Colors</h3>
+                <div class="color-grid">
+                    <div class="color-swatch">
+                        <div class="color-swatch-preview" style="background: var(--dt-background); color: var(--dt-foreground);">
+                            Background
+                        </div>
+                        <div class="color-swatch-info">
+                            <div class="color-swatch-name">Background</div>
+                            <div class="color-swatch-value">--dt-background</div>
+                        </div>
+                    </div>
+                    
+                    <div class="color-swatch">
+                        <div class="color-swatch-preview" style="background: var(--dt-foreground); color: var(--dt-background);">
+                            Foreground
+                        </div>
+                        <div class="color-swatch-info">
+                            <div class="color-swatch-name">Foreground</div>
+                            <div class="color-swatch-value">--dt-foreground</div>
+                        </div>
+                    </div>
+                    
+                    <div class="color-swatch">
+                        <div class="color-swatch-preview" style="background: var(--dt-primary); color: var(--dt-primary-foreground);">
+                            Primary
+                        </div>
+                        <div class="color-swatch-info">
+                            <div class="color-swatch-name">Primary</div>
+                            <div class="color-swatch-value">--dt-primary</div>
+                        </div>
+                    </div>
+                    
+                    <div class="color-swatch">
+                        <div class="color-swatch-preview" style="background: var(--dt-secondary); color: var(--dt-secondary-foreground);">
+                            Secondary
+                        </div>
+                        <div class="color-swatch-info">
+                            <div class="color-swatch-name">Secondary</div>
+                            <div class="color-swatch-value">--dt-secondary</div>
+                        </div>
+                    </div>
+                    
+                    <div class="color-swatch">
+                        <div class="color-swatch-preview" style="background: var(--dt-muted); color: var(--dt-muted-foreground);">
+                            Muted
+                        </div>
+                        <div class="color-swatch-info">
+                            <div class="color-swatch-name">Muted</div>
+                            <div class="color-swatch-value">--dt-muted</div>
+                        </div>
+                    </div>
+                    
+                    <div class="color-swatch">
+                        <div class="color-swatch-preview" style="background: var(--dt-destructive); color: var(--dt-destructive-foreground);">
+                            Destructive
+                        </div>
+                        <div class="color-swatch-info">
+                            <div class="color-swatch-name">Destructive</div>
+                            <div class="color-swatch-value">--dt-destructive</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">DataTable Specific Colors</h3>
+                <div class="color-grid">
+                    <div class="color-swatch">
+                        <div class="color-swatch-preview" style="background: var(--dt-header-bg); color: var(--dt-foreground);">
+                            Header BG
+                        </div>
+                        <div class="color-swatch-info">
+                            <div class="color-swatch-name">Header Background</div>
+                            <div class="color-swatch-value">--dt-header-bg</div>
+                        </div>
+                    </div>
+                    
+                    <div class="color-swatch">
+                        <div class="color-swatch-preview" style="background: var(--dt-row-hover); color: var(--dt-foreground);">
+                            Row Hover
+                        </div>
+                        <div class="color-swatch-info">
+                            <div class="color-swatch-name">Row Hover</div>
+                            <div class="color-swatch-value">--dt-row-hover</div>
+                        </div>
+                    </div>
+                    
+                    <div class="color-swatch">
+                        <div class="color-swatch-preview" style="background: var(--dt-row-selected); color: var(--dt-foreground);">
+                            Row Selected
+                        </div>
+                        <div class="color-swatch-info">
+                            <div class="color-swatch-name">Row Selected</div>
+                            <div class="color-swatch-value">--dt-row-selected</div>
+                        </div>
+                    </div>
+                    
+                    <div class="color-swatch">
+                        <div class="color-swatch-preview" style="background: var(--dt-row-stripe); color: var(--dt-foreground);">
+                            Row Stripe
+                        </div>
+                        <div class="color-swatch-info">
+                            <div class="color-swatch-name">Row Stripe</div>
+                            <div class="color-swatch-value">--dt-row-stripe</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Typography -->
+        <div class="section">
+            <h2 class="section-title">Typography</h2>
+            
+            <div class="component-example">
+                <div style="margin-bottom: var(--dt-spacing-md);">
+                    <span class="dt-text-xs dt-text-muted">Text XS (12px)</span>
+                    <p class="dt-text-xs">The quick brown fox jumps over the lazy dog</p>
+                </div>
+                
+                <div style="margin-bottom: var(--dt-spacing-md);">
+                    <span class="dt-text-xs dt-text-muted">Text SM (14px)</span>
+                    <p class="dt-text-sm">The quick brown fox jumps over the lazy dog</p>
+                </div>
+                
+                <div style="margin-bottom: var(--dt-spacing-md);">
+                    <span class="dt-text-xs dt-text-muted">Text Base (16px)</span>
+                    <p class="dt-text-base">The quick brown fox jumps over the lazy dog</p>
+                </div>
+                
+                <div style="margin-bottom: var(--dt-spacing-md);">
+                    <span class="dt-text-xs dt-text-muted">Text LG (18px)</span>
+                    <p class="dt-text-lg">The quick brown fox jumps over the lazy dog</p>
+                </div>
+                
+                <div>
+                    <span class="dt-text-xs dt-text-muted">Text XL (20px)</span>
+                    <p class="dt-text-xl">The quick brown fox jumps over the lazy dog</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Spacing System -->
+        <div class="section">
+            <h2 class="section-title">Spacing System</h2>
+            
+            <div class="component-example">
+                <div style="display: flex; gap: var(--dt-spacing-lg); align-items: center;">
+                    <div>
+                        <div style="width: 100px; height: var(--dt-spacing-xs); background: var(--dt-primary);"></div>
+                        <p class="dt-text-xs dt-text-muted">XS (4px)</p>
+                    </div>
+                    
+                    <div>
+                        <div style="width: 100px; height: var(--dt-spacing-sm); background: var(--dt-primary);"></div>
+                        <p class="dt-text-xs dt-text-muted">SM (8px)</p>
+                    </div>
+                    
+                    <div>
+                        <div style="width: 100px; height: var(--dt-spacing-md); background: var(--dt-primary);"></div>
+                        <p class="dt-text-xs dt-text-muted">MD (12px)</p>
+                    </div>
+                    
+                    <div>
+                        <div style="width: 100px; height: var(--dt-spacing-lg); background: var(--dt-primary);"></div>
+                        <p class="dt-text-xs dt-text-muted">LG (16px)</p>
+                    </div>
+                    
+                    <div>
+                        <div style="width: 100px; height: var(--dt-spacing-xl); background: var(--dt-primary);"></div>
+                        <p class="dt-text-xs dt-text-muted">XL (24px)</p>
+                    </div>
+                    
+                    <div>
+                        <div style="width: 100px; height: var(--dt-spacing-2xl); background: var(--dt-primary);"></div>
+                        <p class="dt-text-xs dt-text-muted">2XL (32px)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Components -->
+        <div class="section">
+            <h2 class="section-title">Components</h2>
+            
+            <!-- Buttons -->
+            <div class="subsection">
+                <h3 class="subsection-title">Buttons</h3>
+                
+                <div class="component-example">
+                    <div class="component-label">Button Variants</div>
+                    <div style="display: flex; gap: var(--dt-spacing-sm); flex-wrap: wrap; margin-bottom: var(--dt-spacing-lg);">
+                        <button class="dt-button dt-button-primary">Primary</button>
+                        <button class="dt-button dt-button-secondary">Secondary</button>
+                        <button class="dt-button dt-button-outline">Outline</button>
+                        <button class="dt-button dt-button-ghost">Ghost</button>
+                        <button class="dt-button dt-button-destructive">Destructive</button>
+                    </div>
+                    
+                    <div class="component-label">Button Sizes</div>
+                    <div style="display: flex; gap: var(--dt-spacing-sm); align-items: center; flex-wrap: wrap;">
+                        <button class="dt-button dt-button-primary dt-button-xs">Extra Small</button>
+                        <button class="dt-button dt-button-primary dt-button-sm">Small</button>
+                        <button class="dt-button dt-button-primary">Default</button>
+                        <button class="dt-button dt-button-primary dt-button-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Form Elements -->
+            <div class="subsection">
+                <h3 class="subsection-title">Form Elements</h3>
+                
+                <div class="component-example">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--dt-spacing-lg);">
+                        <div>
+                            <div class="component-label">Input</div>
+                            <input type="text" class="dt-input" placeholder="Enter text..." style="width: 100%;">
+                        </div>
+                        
+                        <div>
+                            <div class="component-label">Select</div>
+                            <select class="dt-select" style="width: 100%;">
+                                <option>Option 1</option>
+                                <option>Option 2</option>
+                                <option>Option 3</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <div class="component-label">Switch</div>
+                            <div style="display: flex; align-items: center; gap: var(--dt-spacing-sm);">
+                                <div class="dt-switch">
+                                    <div class="dt-switch-thumb"></div>
+                                </div>
+                                <div class="dt-switch checked">
+                                    <div class="dt-switch-thumb"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Badges -->
+            <div class="subsection">
+                <h3 class="subsection-title">Badges</h3>
+                
+                <div class="component-example">
+                    <div style="display: flex; gap: var(--dt-spacing-sm); flex-wrap: wrap;">
+                        <span class="dt-badge dt-badge-primary">Primary</span>
+                        <span class="dt-badge dt-badge-secondary">Secondary</span>
+                        <span class="dt-badge dt-badge-success">Success</span>
+                        <span class="dt-badge dt-badge-warning">Warning</span>
+                        <span class="dt-badge dt-badge-destructive">Destructive</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tabs -->
+            <div class="subsection">
+                <h3 class="subsection-title">Tabs</h3>
+                
+                <div class="component-example">
+                    <div class="dt-tabs">
+                        <button class="dt-tab active">General</button>
+                        <button class="dt-tab">Styling</button>
+                        <button class="dt-tab">Format</button>
+                        <button class="dt-tab">Filter</button>
+                        <button class="dt-tab">Editor</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- DataTable Component -->
+        <div class="section">
+            <h2 class="section-title">DataTable Component</h2>
+            
+            <div class="dt-table">
+                <div class="dt-header">
+                    <div class="dt-cell">Name</div>
+                    <div class="dt-cell">Status</div>
+                    <div class="dt-cell">Amount</div>
+                    <div class="dt-cell">Date</div>
+                </div>
+                
+                <div class="dt-row">
+                    <div class="dt-cell">John Doe</div>
+                    <div class="dt-cell">
+                        <span class="dt-badge dt-badge-success">Active</span>
+                    </div>
+                    <div class="dt-cell">$1,234.56</div>
+                    <div class="dt-cell">2024-01-15</div>
+                </div>
+                
+                <div class="dt-row selected">
+                    <div class="dt-cell">Jane Smith</div>
+                    <div class="dt-cell">
+                        <span class="dt-badge dt-badge-warning">Pending</span>
+                    </div>
+                    <div class="dt-cell">$2,345.67</div>
+                    <div class="dt-cell">2024-01-16</div>
+                </div>
+                
+                <div class="dt-row">
+                    <div class="dt-cell">Bob Johnson</div>
+                    <div class="dt-cell">
+                        <span class="dt-badge dt-badge-secondary">Inactive</span>
+                    </div>
+                    <div class="dt-cell">$3,456.78</div>
+                    <div class="dt-cell">2024-01-17</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dialog Example -->
+        <div class="section">
+            <h2 class="section-title">Dialog Component</h2>
+            
+            <div class="dt-dialog" style="max-width: 500px; margin: 0 auto;">
+                <div class="dt-dialog-header">
+                    <h3 class="dt-dialog-title">Column Formatting</h3>
+                </div>
+                
+                <div class="dt-dialog-content">
+                    <p class="dt-text-sm dt-text-muted">
+                        Configure column display settings and formatting options.
+                    </p>
+                    
+                    <div style="margin-top: var(--dt-spacing-lg);">
+                        <label class="dt-text-sm dt-font-medium" style="display: block; margin-bottom: var(--dt-spacing-sm);">
+                            Column Name
+                        </label>
+                        <input type="text" class="dt-input" style="width: 100%;" value="Customer Name">
+                    </div>
+                </div>
+                
+                <div class="dt-dialog-footer">
+                    <button class="dt-button dt-button-outline">Cancel</button>
+                    <button class="dt-button dt-button-primary">Apply</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Guidelines -->
+        <div class="section">
+            <h2 class="section-title">Design Guidelines</h2>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">Component Heights</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li class="dt-text-sm" style="margin-bottom: var(--dt-spacing-sm);">
+                        <code style="background: var(--dt-muted); padding: 2px 6px; border-radius: 4px;">32px</code> - Default inputs and buttons
+                    </li>
+                    <li class="dt-text-sm" style="margin-bottom: var(--dt-spacing-sm);">
+                        <code style="background: var(--dt-muted); padding: 2px 6px; border-radius: 4px;">28px</code> - Small buttons and compact inputs
+                    </li>
+                    <li class="dt-text-sm" style="margin-bottom: var(--dt-spacing-sm);">
+                        <code style="background: var(--dt-muted); padding: 2px 6px; border-radius: 4px;">24px</code> - Extra small buttons
+                    </li>
+                    <li class="dt-text-sm" style="margin-bottom: var(--dt-spacing-sm);">
+                        <code style="background: var(--dt-muted); padding: 2px 6px; border-radius: 4px;">40px</code> - Table rows
+                    </li>
+                    <li class="dt-text-sm">
+                        <code style="background: var(--dt-muted); padding: 2px 6px; border-radius: 4px;">48px</code> - Table headers
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">Border Radius</h3>
+                <div style="display: flex; gap: var(--dt-spacing-lg); align-items: center;">
+                    <div style="text-align: center;">
+                        <div style="width: 60px; height: 60px; background: var(--dt-muted); border-radius: var(--dt-radius-sm);"></div>
+                        <p class="dt-text-xs dt-text-muted">SM (4px)</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="width: 60px; height: 60px; background: var(--dt-muted); border-radius: var(--dt-radius-md);"></div>
+                        <p class="dt-text-xs dt-text-muted">MD (6px)</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="width: 60px; height: 60px; background: var(--dt-muted); border-radius: var(--dt-radius-lg);"></div>
+                        <p class="dt-text-xs dt-text-muted">LG (8px)</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="width: 60px; height: 60px; background: var(--dt-muted); border-radius: var(--dt-radius-xl);"></div>
+                        <p class="dt-text-xs dt-text-muted">XL (12px)</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="width: 60px; height: 60px; background: var(--dt-muted); border-radius: var(--dt-radius-full);"></div>
+                        <p class="dt-text-xs dt-text-muted">Full</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">Shadows</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--dt-spacing-lg);">
+                    <div style="text-align: center;">
+                        <div style="width: 100%; height: 60px; background: var(--dt-card); border-radius: var(--dt-radius-md); box-shadow: var(--dt-shadow-sm);"></div>
+                        <p class="dt-text-xs dt-text-muted">Shadow SM</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="width: 100%; height: 60px; background: var(--dt-card); border-radius: var(--dt-radius-md); box-shadow: var(--dt-shadow-md);"></div>
+                        <p class="dt-text-xs dt-text-muted">Shadow MD</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="width: 100%; height: 60px; background: var(--dt-card); border-radius: var(--dt-radius-md); box-shadow: var(--dt-shadow-lg);"></div>
+                        <p class="dt-text-xs dt-text-muted">Shadow LG</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="width: 100%; height: 60px; background: var(--dt-card); border-radius: var(--dt-radius-md); box-shadow: var(--dt-shadow-xl);"></div>
+                        <p class="dt-text-xs dt-text-muted">Shadow XL</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

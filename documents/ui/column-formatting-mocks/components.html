@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Common Components - Column Formatting</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .component-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .component-example {
+            background: var(--muted);
+            border-radius: 4px;
+            padding: 16px;
+            margin-top: 12px;
+        }
+        
+        .dropdown-content {
+            position: relative;
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 8px;
+            margin-top: 4px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dropdown-item {
+            padding: 8px 12px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.15s ease;
+        }
+        
+        .dropdown-item:hover {
+            background: var(--accent);
+        }
+        
+        .dropdown-item.selected {
+            background: var(--primary);
+            color: var(--primary-foreground);
+        }
+        
+        .color-picker-popup {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 10px 38px -10px rgba(0, 0, 0, 0.35);
+            width: 280px;
+        }
+        
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+        
+        .color-swatch-large {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            transition: transform 0.15s ease;
+        }
+        
+        .color-swatch-large:hover {
+            transform: scale(1.1);
+        }
+        
+        .help-popup {
+            background: var(--popover);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 10px 38px -10px rgba(0, 0, 0, 0.35);
+            max-width: 400px;
+        }
+        
+        .help-section {
+            margin-bottom: 16px;
+        }
+        
+        .help-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .help-example {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 8px;
+            background: var(--muted);
+            border-radius: 4px;
+            margin-bottom: 4px;
+            font-size: 0.75rem;
+        }
+        
+        .code {
+            font-family: 'Courier New', monospace;
+            background: var(--muted);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Common Components</h1>
+        <p class="text-muted mb-3">Reusable UI elements used throughout the column formatting dialog</p>
+        
+        <!-- Column Multi-Select Dropdown -->
+        <div class="component-section">
+            <h2 class="font-semibold mb-2">Column Multi-Select Dropdown</h2>
+            <p class="text-sm text-muted mb-3">Used in the header for selecting multiple columns</p>
+            
+            <div class="component-example">
+                <div style="max-width: 300px;">
+                    <div class="column-selector-trigger">
+                        <span>3 columns selected</span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    
+                    <div class="dropdown-content">
+                        <div class="mb-2">
+                            <input type="text" class="input w-full" placeholder="Search columns...">
+                        </div>
+                        
+                        <div class="flex justify-between mb-2">
+                            <button class="btn text-xs">Select All</button>
+                            <button class="btn text-xs">Clear All</button>
+                        </div>
+                        
+                        <div style="max-height: 200px; overflow-y: auto;">
+                            <div class="dropdown-item selected">
+                                <label class="flex items-center gap-2 text-xs">
+                                    <input type="checkbox" checked> Customer Name
+                                </label>
+                            </div>
+                            <div class="dropdown-item">
+                                <label class="flex items-center gap-2 text-xs">
+                                    <input type="checkbox"> Order ID
+                                </label>
+                            </div>
+                            <div class="dropdown-item selected">
+                                <label class="flex items-center gap-2 text-xs">
+                                    <input type="checkbox" checked> Order Date
+                                </label>
+                            </div>
+                            <div class="dropdown-item selected">
+                                <label class="flex items-center gap-2 text-xs">
+                                    <input type="checkbox" checked> Total Amount
+                                </label>
+                            </div>
+                            <div class="dropdown-item">
+                                <label class="flex items-center gap-2 text-xs">
+                                    <input type="checkbox"> Status
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Color Picker Popover -->
+        <div class="component-section">
+            <h2 class="font-semibold mb-2">Color Picker Popover</h2>
+            <p class="text-sm text-muted mb-3">Used for selecting colors in the Styling tab</p>
+            
+            <div class="component-example">
+                <div class="flex items-center gap-4">
+                    <div>
+                        <p class="text-xs mb-2">Trigger Button:</p>
+                        <div class="color-swatch" style="color: #3B82F6;"></div>
+                    </div>
+                    
+                    <div>
+                        <p class="text-xs mb-2">Popover Content:</p>
+                        <div class="color-picker-popup">
+                            <div class="color-grid">
+                                <div class="color-swatch-large" style="background: #EF4444;"></div>
+                                <div class="color-swatch-large" style="background: #F97316;"></div>
+                                <div class="color-swatch-large" style="background: #F59E0B;"></div>
+                                <div class="color-swatch-large" style="background: #EAB308;"></div>
+                                <div class="color-swatch-large" style="background: #84CC16;"></div>
+                                <div class="color-swatch-large" style="background: #22C55E;"></div>
+                                <div class="color-swatch-large" style="background: #10B981;"></div>
+                                <div class="color-swatch-large" style="background: #14B8A6;"></div>
+                                <div class="color-swatch-large" style="background: #06B6D4;"></div>
+                                <div class="color-swatch-large" style="background: #0EA5E9;"></div>
+                                <div class="color-swatch-large" style="background: #3B82F6;"></div>
+                                <div class="color-swatch-large" style="background: #6366F1;"></div>
+                                <div class="color-swatch-large" style="background: #8B5CF6;"></div>
+                                <div class="color-swatch-large" style="background: #A855F7;"></div>
+                                <div class="color-swatch-large" style="background: #D946EF;"></div>
+                                <div class="color-swatch-large" style="background: #EC4899;"></div>
+                            </div>
+                            
+                            <div class="flex gap-2">
+                                <input type="text" class="input flex-1" value="#3B82F6">
+                                <button class="btn">Apply</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Format Help Popover -->
+        <div class="component-section">
+            <h2 class="font-semibold mb-2">Format Help Guide</h2>
+            <p class="text-sm text-muted mb-3">Help popup showing Excel format syntax</p>
+            
+            <div class="component-example">
+                <div class="help-popup">
+                    <h3 class="font-semibold mb-3">Excel Format String Guide</h3>
+                    
+                    <div class="help-section">
+                        <h4 class="text-sm font-medium mb-2">Number Formats</h4>
+                        <div class="help-example">
+                            <span class="code">0</span>
+                            <span>1235</span>
+                        </div>
+                        <div class="help-example">
+                            <span class="code">0.00</span>
+                            <span>1234.50</span>
+                        </div>
+                        <div class="help-example">
+                            <span class="code">#,##0.00</span>
+                            <span>1,234.50</span>
+                        </div>
+                        <div class="help-example">
+                            <span class="code">$#,##0.00</span>
+                            <span>$1,234.50</span>
+                        </div>
+                    </div>
+                    
+                    <div class="help-section">
+                        <h4 class="text-sm font-medium mb-2">Date Formats</h4>
+                        <div class="help-example">
+                            <span class="code">mm/dd/yyyy</span>
+                            <span>12/31/2023</span>
+                        </div>
+                        <div class="help-example">
+                            <span class="code">dd-mmm-yy</span>
+                            <span>31-Dec-23</span>
+                        </div>
+                        <div class="help-example">
+                            <span class="code">mmmm d, yyyy</span>
+                            <span>December 31, 2023</span>
+                        </div>
+                    </div>
+                    
+                    <div class="help-section">
+                        <h4 class="text-sm font-medium mb-2">Conditional Formatting</h4>
+                        <div class="help-example">
+                            <span class="code">[Red]-0;[Green]+0</span>
+                            <span>Colored numbers</span>
+                        </div>
+                        <div class="help-example">
+                            <span class="code">[>100]"High";[<50]"Low";"Medium"</span>
+                            <span>Value ranges</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Preview Components -->
+        <div class="component-section">
+            <h2 class="font-semibold mb-2">Preview Components</h2>
+            <p class="text-sm text-muted mb-3">Used to show live previews of formatting</p>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <h3 class="text-sm font-medium mb-2">Cell Preview</h3>
+                    <div class="component-example">
+                        <div class="preview-panel">
+                            <p class="preview-label">CELL PREVIEW</p>
+                            <div class="preview-content">
+                                <div style="padding: 8px 12px; background: white; border: 1px solid var(--border); font-family: Arial; font-size: 14px; color: #374151;">
+                                    Sample Text
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-medium mb-2">Format Preview</h3>
+                    <div class="component-example">
+                        <div class="preview-panel">
+                            <div class="space-y-2">
+                                <div class="info-row">
+                                    <span class="info-label">Input:</span>
+                                    <span class="info-value">1234.56</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Output:</span>
+                                    <span class="info-value" style="font-size: 1.125rem; color: var(--primary);">$1,234.56</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Format:</span>
+                                    <span class="code">$#,##0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- State Indicators -->
+        <div class="component-section">
+            <h2 class="font-semibold mb-2">State Indicators</h2>
+            <p class="text-sm text-muted mb-3">Visual indicators for various states</p>
+            
+            <div class="component-example">
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <h3 class="text-xs font-medium mb-2">Mixed Value Indicator</h3>
+                        <div class="space-y-2">
+                            <input type="text" class="input w-full" placeholder="Mixed values" disabled>
+                            <div class="switch" style="background: var(--primary); opacity: 0.5;">
+                                <div class="switch-thumb" style="transform: translateX(8px);"></div>
+                            </div>
+                            <select class="select w-full">
+                                <option>Mixed</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xs font-medium mb-2">Pending Changes</h3>
+                        <div class="space-y-2">
+                            <button class="btn btn-primary">
+                                Apply
+                                <span class="selected-count">3</span>
+                            </button>
+                            <div class="text-xs text-muted">
+                                3 columns have pending changes
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xs font-medium mb-2">Loading States</h3>
+                        <div class="space-y-2">
+                            <button class="btn" disabled>
+                                <svg class="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    <path d="M9 12h6" opacity="0.3"></path>
+                                </svg>
+                                Loading...
+                            </button>
+                            <div class="skeleton" style="height: 28px; background: var(--muted); border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Template Examples -->
+        <div class="component-section">
+            <h2 class="font-semibold mb-2">Format Template Examples</h2>
+            <p class="text-sm text-muted mb-3">Visual examples of format templates</p>
+            
+            <div class="component-example">
+                <div class="grid grid-cols-4 gap-4">
+                    <div>
+                        <p class="text-xs font-medium mb-2">Status Badge</p>
+                        <div class="space-y-2">
+                            <span style="background: #D1FAE5; color: #065F46; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">Active</span>
+                            <br>
+                            <span style="background: #FEF3C7; color: #92400E; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">Pending</span>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <p class="text-xs font-medium mb-2">Progress Bar</p>
+                        <div class="space-y-2">
+                            <div style="width: 100%; height: 20px; background: #E5E7EB; border-radius: 4px; overflow: hidden;">
+                                <div style="width: 65%; height: 100%; background: #3B82F6; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.625rem; font-weight: 600;">
+                                    65%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <p class="text-xs font-medium mb-2">Star Rating</p>
+                        <div style="font-size: 1rem; color: #F59E0B;">
+                            ★★★★☆
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <p class="text-xs font-medium mb-2">Temperature</p>
+                        <div style="font-size: 0.875rem;">
+                            25°C 🌡️
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

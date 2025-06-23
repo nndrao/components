@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>General Tab - Column Formatting</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>General Tab</h1>
+        <p class="text-muted mb-3">Basic column settings and metadata configuration</p>
+        
+        <!-- Single Column Selected -->
+        <div class="bg-card border rounded-lg p-4 mb-4">
+            <h3 class="font-semibold mb-3">Single Column Selected</h3>
+            
+            <!-- Row 1: Header name and type -->
+            <div class="form-row">
+                <div class="flex-1">
+                    <label class="form-label">Header Name</label>
+                    <input type="text" class="input w-full" value="Customer Name">
+                </div>
+                <div style="width: 200px;">
+                    <label class="form-label">Column Type</label>
+                    <select class="select w-full">
+                        <option selected>Text</option>
+                        <option>Numeric</option>
+                        <option>Date</option>
+                        <option>Boolean</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Row 2: Quick toggles -->
+            <div class="bg-muted rounded p-3 mt-3">
+                <div class="flex items-center gap-4">
+                    <div class="switch-group">
+                        <div class="switch checked">
+                            <div class="switch-thumb"></div>
+                        </div>
+                        <label class="text-xs">Floating Filter</label>
+                    </div>
+                    
+                    <div class="switch-group">
+                        <div class="switch checked">
+                            <div class="switch-thumb"></div>
+                        </div>
+                        <label class="text-xs">Enable Filter</label>
+                    </div>
+                    
+                    <div class="switch-group">
+                        <div class="switch">
+                            <div class="switch-thumb"></div>
+                        </div>
+                        <label class="text-xs">Editable</label>
+                    </div>
+                    
+                    <button class="btn text-xs" style="margin-left: auto;">Advanced Settings</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Multiple Columns Selected -->
+        <div class="bg-card border rounded-lg p-4 mb-4">
+            <h3 class="font-semibold mb-3">Multiple Columns Selected (3)</h3>
+            
+            <!-- Row 1: Header name and type -->
+            <div class="form-row">
+                <div class="flex-1">
+                    <label class="form-label">Header Name</label>
+                    <input type="text" class="input w-full" placeholder="Mixed values" disabled>
+                </div>
+                <div style="width: 200px;">
+                    <label class="form-label">Column Type</label>
+                    <select class="select w-full">
+                        <option>Mixed</option>
+                        <option>Text</option>
+                        <option>Numeric</option>
+                        <option>Date</option>
+                        <option>Boolean</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Row 2: Quick toggles with mixed states -->
+            <div class="bg-muted rounded p-3 mt-3">
+                <div class="flex items-center gap-4">
+                    <div class="switch-group">
+                        <div class="switch" style="background: var(--primary); opacity: 0.5;">
+                            <div class="switch-thumb" style="transform: translateX(8px);"></div>
+                        </div>
+                        <label class="text-xs">Floating Filter (Mixed)</label>
+                    </div>
+                    
+                    <div class="switch-group">
+                        <div class="switch checked">
+                            <div class="switch-thumb"></div>
+                        </div>
+                        <label class="text-xs">Enable Filter</label>
+                    </div>
+                    
+                    <div class="switch-group">
+                        <div class="switch">
+                            <div class="switch-thumb"></div>
+                        </div>
+                        <label class="text-xs">Editable</label>
+                    </div>
+                    
+                    <button class="btn text-xs" style="margin-left: auto;">Advanced Settings</button>
+                </div>
+            </div>
+            
+            <!-- Info panel -->
+            <div class="info-panel mt-3">
+                <p class="text-xs text-muted">
+                    <strong>Selected columns:</strong> Customer Name (Text), Order Date (Date), Total Amount (Numeric)
+                </p>
+            </div>
+        </div>
+        
+        <!-- States and Behaviors -->
+        <div class="bg-card border rounded-lg p-4">
+            <h3 class="font-semibold mb-3">States and Behaviors</h3>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <h4 class="text-sm font-medium mb-2">Toggle States</h4>
+                    <div class="space-y-2">
+                        <div class="switch-group">
+                            <div class="switch">
+                                <div class="switch-thumb"></div>
+                            </div>
+                            <label class="text-xs">Off State</label>
+                        </div>
+                        <div class="switch-group">
+                            <div class="switch checked">
+                                <div class="switch-thumb"></div>
+                            </div>
+                            <label class="text-xs">On State</label>
+                        </div>
+                        <div class="switch-group">
+                            <div class="switch" style="background: var(--primary); opacity: 0.5;">
+                                <div class="switch-thumb" style="transform: translateX(8px);"></div>
+                            </div>
+                            <label class="text-xs">Mixed State (Multi-select)</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-sm font-medium mb-2">Column Types</h4>
+                    <div class="space-y-2">
+                        <div class="text-xs">
+                            <span class="font-medium">Text:</span> String values, case transforms
+                        </div>
+                        <div class="text-xs">
+                            <span class="font-medium">Numeric:</span> Numbers, calculations, aggregations
+                        </div>
+                        <div class="text-xs">
+                            <span class="font-medium">Date:</span> Date/time values, formatting
+                        </div>
+                        <div class="text-xs">
+                            <span class="font-medium">Boolean:</span> True/false, checkboxes
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
