@@ -25,7 +25,12 @@ import {
   ArrowLeft,
   ChevronsRight,
   ChevronsLeft,
-  Database
+  Database,
+  Type,
+  Hash,
+  Calendar,
+  ToggleLeft,
+  MoreHorizontal
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { 
@@ -48,6 +53,18 @@ interface DataSourceDialogProps {
   onDeactivateDatasource?: (id: string) => Promise<void>;
   onTestConnection?: (config: DataSourceConfig) => Promise<{ success: boolean; message: string }>;
   onInferFields?: (config: DataSourceConfig) => Promise<any[]>;
+}
+
+interface ColumnEditPopupProps {
+  column: any;
+  index: number;
+  onSave: (index: number, updates: { headerName: string; type: string }) => void;
+  onClose: () => void;
+}
+
+interface AddColumnPopupProps {
+  onAdd: (column: { field: string; headerName: string; type: string }) => void;
+  onClose: () => void;
 }
 
 // Utility to collect only leaf field paths
@@ -109,6 +126,9 @@ export function DataSourceDialog({
   const [selectedFields, setSelectedFields] = useState<Set<string>>(new Set());
   const [fieldSearchQuery, setFieldSearchQuery] = useState('');
   const [selectedColumnIndices, setSelectedColumnIndices] = useState<Set<number>>(new Set());
+  const [editingColumn, setEditingColumn] = useState<{ index: number; column: any } | null>(null);
+  const [columnSearchQuery, setColumnSearchQuery] = useState('');
+  const [showAddColumn, setShowAddColumn] = useState(false);
   
   // Reset form when dialog closes
   useEffect(() => {
@@ -121,6 +141,8 @@ export function DataSourceDialog({
       setSelectedFields(new Set());
       setExpandedFields(new Set());
       setFieldSearchQuery('');
+      setColumnSearchQuery('');
+      setShowAddColumn(false);
     }
   }, [open]);
   
@@ -412,10 +434,18 @@ export function DataSourceDialog({
         
         const fieldInfo = findField(inferredFields, fieldPath);
         if (fieldInfo && (!fieldInfo.children || fieldInfo.children.length === 0)) {
+          // Create a capitalized header name from the field name
+          const headerName = fieldInfo.name
+            .split(/(?=[A-Z])/)
+            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+          
           newColumns.push({
             field: fieldPath,
-            headerName: fieldInfo.name,
-            type: fieldInfo.type === 'number' ? 'numericColumn' : 'textColumn'
+            headerName: headerName,
+            type: fieldInfo.type === 'number' ? 'numericColumn' : 
+                  fieldInfo.type === 'boolean' ? 'booleanColumn' :
+                  fieldInfo.type === 'date' ? 'dateColumn' : 'textColumn'
           });
         }
       }
@@ -480,7 +510,7 @@ export function DataSourceDialog({
           <div key={fieldPath}>
             <div 
               className={cn(
-                "flex items-center gap-3 h-8 px-2 hover:bg-accent rounded-sm cursor-pointer",
+                "flex items-center gap-3 min-h-[2.5rem] py-1 px-2 hover:bg-accent rounded-sm cursor-pointer",
                 level > 0 && "ml-6"
               )}
               onClick={() => toggleFieldSelected(fieldPath)}
@@ -504,11 +534,14 @@ export function DataSourceDialog({
                 onClick={(e) => e.stopPropagation()}
               />
               
-              <Badge variant="secondary" className="h-5 px-2 text-xs font-normal">
-                {field.type}
-              </Badge>
+              {getTypeIcon(field.type || 'string')}
               
-              <span className="text-sm flex-1">{field.name}</span>
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-medium truncate">{field.name}</div>
+                {field.path && field.path !== field.name && (
+                  <div className="text-xs text-muted-foreground truncate">{field.path}</div>
+                )}
+              </div>
             </div>
             
             {hasChildren && isExpanded && field.children && (
@@ -523,11 +556,142 @@ export function DataSourceDialog({
     // Return the actual column definitions from formData
     return (formData.config?.columnDefs || []).map((col: any) => ({
       field: col.field,
-      header: col.headerName || col.field,
+      header: col.headerName || col.field.split(/(?=[A-Z])/).map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
       type: col.type || 'textColumn',
       path: col.field,
       headerName: col.headerName
     }));
+  };
+  
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case 'number':
+      case 'numericColumn':
+        return <Hash className="h-4 w-4 text-muted-foreground flex-shrink-0" />;
+      case 'date':
+      case 'dateColumn':
+        return <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />;
+      case 'boolean':
+      case 'booleanColumn':
+        return <ToggleLeft className="h-4 w-4 text-muted-foreground flex-shrink-0" />;
+      default:
+        return <Type className="h-4 w-4 text-muted-foreground flex-shrink-0" />;
+    }
+  };
+  
+  const ColumnEditPopup = ({ column, index, onSave, onClose }: ColumnEditPopupProps) => {
+    const [headerName, setHeaderName] = useState(column.header);
+    const [type, setType] = useState(column.type || 'textColumn');
+    
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black/50" onClick={onClose} />
+        <div className="relative z-50 bg-background border rounded-lg shadow-lg p-6 w-[400px]">
+          <h3 className="text-lg font-semibold mb-4">Edit Column</h3>
+          <div className="space-y-4">
+            <div>
+              <Label>Field Name</Label>
+              <Input value={column.field} disabled className="mt-1.5" />
+            </div>
+            <div>
+              <Label>Header Name</Label>
+              <Input 
+                value={headerName} 
+                onChange={(e) => setHeaderName(e.target.value)}
+                placeholder="Enter column header..."
+                className="mt-1.5"
+              />
+            </div>
+            <div>
+              <Label>Type</Label>
+              <Select value={type} onValueChange={setType}>
+                <SelectTrigger className="mt-1.5">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="textColumn">Text</SelectItem>
+                  <SelectItem value="numericColumn">Number</SelectItem>
+                  <SelectItem value="dateColumn">Date</SelectItem>
+                  <SelectItem value="booleanColumn">Boolean</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 mt-6">
+            <Button variant="outline" onClick={onClose}>Cancel</Button>
+            <Button onClick={() => {
+              onSave(index, { headerName, type });
+              onClose();
+            }}>Save</Button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
+  const AddColumnPopup = ({ onAdd, onClose }: AddColumnPopupProps) => {
+    const [fieldName, setFieldName] = useState('');
+    const [headerName, setHeaderName] = useState('');
+    const [type, setType] = useState('textColumn');
+    
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black/50" onClick={onClose} />
+        <div className="relative z-50 bg-background border rounded-lg shadow-lg p-6 w-[400px]">
+          <h3 className="text-lg font-semibold mb-4">Add Column</h3>
+          <div className="space-y-4">
+            <div>
+              <Label>Field Name *</Label>
+              <Input 
+                value={fieldName} 
+                onChange={(e) => setFieldName(e.target.value)}
+                placeholder="e.g., customField"
+                className="mt-1.5"
+              />
+            </div>
+            <div>
+              <Label>Header Name</Label>
+              <Input 
+                value={headerName} 
+                onChange={(e) => setHeaderName(e.target.value)}
+                placeholder="e.g., Custom Field"
+                className="mt-1.5"
+              />
+            </div>
+            <div>
+              <Label>Type</Label>
+              <Select value={type} onValueChange={setType}>
+                <SelectTrigger className="mt-1.5">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="textColumn">Text</SelectItem>
+                  <SelectItem value="numericColumn">Number</SelectItem>
+                  <SelectItem value="dateColumn">Date</SelectItem>
+                  <SelectItem value="booleanColumn">Boolean</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 mt-6">
+            <Button variant="outline" onClick={onClose}>Cancel</Button>
+            <Button 
+              onClick={() => {
+                if (fieldName.trim()) {
+                  const finalHeaderName = headerName.trim() || 
+                    fieldName.split(/(?=[A-Z])/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                  onAdd({ field: fieldName, headerName: finalHeaderName, type });
+                  onClose();
+                }
+              }}
+              disabled={!fieldName.trim()}
+            >
+              Add Column
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
   };
   
   if (view === 'list') {
@@ -703,7 +867,8 @@ export function DataSourceDialog({
   
   // Edit view
   return (
-    <DraggableDialog
+    <>
+      <DraggableDialog
       open={open}
       onOpenChange={onOpenChange}
       title={`${isCreating ? 'New' : 'Edit'} ${
@@ -903,7 +1068,7 @@ export function DataSourceDialog({
                     </div>
                   )}
                   
-                  <div className="flex-1 overflow-y-auto p-4">
+                  <div className="flex-1 overflow-y-auto p-3">
                     {inferredFields.length === 0 ? (
                       <div className="flex flex-col items-center justify-center h-full text-center">
                         <Search className="h-10 w-10 mx-auto mb-3 opacity-50" />
@@ -912,7 +1077,7 @@ export function DataSourceDialog({
                         </p>
                       </div>
                     ) : (
-                      <div className="space-y-1">
+                      <div className="space-y-0.5">
                         {renderFieldTree(inferredFields)}
                       </div>
                     )}
@@ -1009,22 +1174,33 @@ export function DataSourceDialog({
                     </div>
                   </div>
                   
-                  <div className="flex-1 overflow-y-auto">
-                    <Table>
-                      <TableHeader className="sticky top-0 bg-background">
-                    <TableRow>
-                      <TableHead>Field name</TableHead>
-                      <TableHead>Header name</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead className="w-[50px]"></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {getSelectedColumns().map((col: any, idx: number) => (
-                      <TableRow 
+                  {getSelectedColumns().length > 0 && (
+                    <div className="px-4 py-3 border-b">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Search columns..."
+                          value={columnSearchQuery}
+                          onChange={(e) => setColumnSearchQuery(e.target.value)}
+                          className="pl-9 h-8"
+                        />
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="flex-1 overflow-y-auto p-3">
+                    <div className="space-y-0.5">
+                    {getSelectedColumns()
+                      .filter((col: any) => 
+                        !columnSearchQuery || 
+                        col.field.toLowerCase().includes(columnSearchQuery.toLowerCase()) ||
+                        col.header.toLowerCase().includes(columnSearchQuery.toLowerCase())
+                      )
+                      .map((col: any, idx: number) => (
+                      <div 
                         key={idx}
                         className={cn(
-                          "cursor-pointer",
+                          "flex items-center gap-3 min-h-[2.5rem] py-1 px-2 hover:bg-accent rounded-sm cursor-pointer",
                           selectedColumnIndices.has(idx) && "bg-muted/50"
                         )}
                         onClick={() => {
@@ -1037,109 +1213,59 @@ export function DataSourceDialog({
                           setSelectedColumnIndices(newSelected);
                         }}
                       >
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Checkbox 
-                              checked={selectedColumnIndices.has(idx)}
-                              onCheckedChange={(checked) => {
-                                const newSelected = new Set(selectedColumnIndices);
-                                if (checked) {
-                                  newSelected.add(idx);
-                                } else {
-                                  newSelected.delete(idx);
-                                }
-                                setSelectedColumnIndices(newSelected);
-                              }}
-                              onClick={(e) => e.stopPropagation()}
-                            />
-                            <div>
-                              <div className="font-medium">{col.field}</div>
-                              <div className="text-xs text-muted-foreground">{col.path || col.field}</div>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Input 
-                            value={col.header} 
-                            onChange={(e) => {
-                              const newColumns = [...(formData.config?.columnDefs || [])];
-                              newColumns[idx] = { ...col, headerName: e.target.value };
-                              setFormData({
-                                ...formData,
-                                config: {
-                                  ...formData.config,
-                                  columnDefs: newColumns
-                                }
-                              });
-                            }}
-                            onClick={(e) => e.stopPropagation()}
-                            className="h-7"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Select 
-                            value={col.type || 'textColumn'}
-                            onValueChange={(value) => {
-                              const newColumns = [...(formData.config?.columnDefs || [])];
-                              newColumns[idx] = { ...col, type: value };
-                              setFormData({
-                                ...formData,
-                                config: {
-                                  ...formData.config,
-                                  columnDefs: newColumns
-                                }
-                              });
-                            }}
-                          >
-                            <SelectTrigger className="h-7 w-[120px]">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="textColumn">Text</SelectItem>
-                              <SelectItem value="numericColumn">Number</SelectItem>
-                              <SelectItem value="dateColumn">Date</SelectItem>
-                              <SelectItem value="booleanColumn">Boolean</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </TableCell>
-                        <TableCell>
-                          <Button 
-                            variant="ghost" 
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              const newColumns = (formData.config?.columnDefs || []).filter((_: any, i: number) => i !== idx);
-                              setFormData({
-                                ...formData,
-                                config: {
-                                  ...formData.config,
-                                  columnDefs: newColumns
-                                }
-                              });
-                            }}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
+                        <Checkbox 
+                          checked={selectedColumnIndices.has(idx)}
+                          onCheckedChange={(checked) => {
+                            const newSelected = new Set(selectedColumnIndices);
+                            if (checked) {
+                              newSelected.add(idx);
+                            } else {
+                              newSelected.delete(idx);
+                            }
+                            setSelectedColumnIndices(newSelected);
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                        
+                        {getTypeIcon(col.type)}
+                        
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium truncate">{col.header}</div>
+                          <div className="text-xs text-muted-foreground truncate">{col.field}</div>
+                        </div>
+                        
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditingColumn({ index: idx, column: col });
+                          }}
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </div>
                     ))}
-                    {getSelectedColumns().length === 0 && (
-                      <TableRow>
-                        <TableCell colSpan={4} className="text-center py-12">
-                          <div className="text-muted-foreground">
-                            <div>
-                              <ArrowLeft className="h-8 w-8 mx-auto mb-3 opacity-50" />
-                              <h3 className="font-medium mb-2">No Column Definitions</h3>
-                              <p className="text-sm">
-                                Select fields from the left and click the arrow buttons to add columns.
-                              </p>
-                            </div>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
+                  </div>
+                  
+                  {getSelectedColumns().length === 0 && (
+                    <div className="flex flex-col items-center justify-center h-full text-center">
+                      <ArrowLeft className="h-10 w-10 mx-auto mb-3 opacity-50" />
+                      <h3 className="font-medium mb-2">No Column Definitions</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Select fields from the left and click the arrow buttons to add columns.
+                      </p>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setShowAddColumn(true)}
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Column Manually
+                      </Button>
+                    </div>
+                  )}
               </div>
             </div>
           </div>
@@ -1190,15 +1316,69 @@ export function DataSourceDialog({
           </div>
         </Tabs>
         
-        <div className="flex items-center justify-end gap-2 px-6 py-4 border-t">
-          <Button variant="outline" onClick={() => setView('list')}>
-            Cancel
-          </Button>
-          <Button onClick={handleSave}>
-            {isCreating ? 'Create' : 'Update'} Datasource
-          </Button>
+        <div className="flex items-center justify-between px-6 py-4 border-t">
+          <div>
+            {activeTab === 'fields-columns' && (
+              <Button 
+                variant="outline" 
+                onClick={() => setShowAddColumn(true)}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Column
+              </Button>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => setView('list')}>
+              Cancel
+            </Button>
+            <Button onClick={handleSave}>
+              {isCreating ? 'Create' : 'Update'} Datasource
+            </Button>
+          </div>
         </div>
       </div>
     </DraggableDialog>
+      
+    {editingColumn && (
+        <ColumnEditPopup
+          column={editingColumn.column}
+          index={editingColumn.index}
+          onSave={(index, updates) => {
+            const newColumns = [...(formData.config?.columnDefs || [])];
+            newColumns[index] = { 
+              ...newColumns[index], 
+              headerName: updates.headerName,
+              type: updates.type
+            };
+            setFormData({
+              ...formData,
+              config: {
+                ...formData.config,
+                columnDefs: newColumns
+              }
+            });
+          }}
+          onClose={() => setEditingColumn(null)}
+        />
+      )}
+      
+      {showAddColumn && (
+        <AddColumnPopup
+          onAdd={(column) => {
+            const newColumns = [...(formData.config?.columnDefs || [])];
+            newColumns.push(column);
+            setFormData({
+              ...formData,
+              config: {
+                ...formData.config,
+                columnDefs: newColumns
+              }
+            });
+          }}
+          onClose={() => setShowAddColumn(false)}
+        />
+      )}
+    </>
   );
 }
