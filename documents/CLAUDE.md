@@ -40,6 +40,14 @@ npm run test
 npm run preview
 ```
 
+## Important Rules
+
+### AG-Grid State Management
+- **IMPORTANT**: AG-Grid will NEVER save its state automatically on any grid events
+- Grid state (column positions, widths, sorting, filtering) is ONLY saved when the user explicitly clicks the Save button in the DataTable toolbar
+- This prevents infinite loops and gives users full control over when their layout is persisted
+- The Save button saves the current grid state to the active profile
+
 ## Architecture Patterns
 
 ### Component Interface Pattern

@@ -1,0 +1,311 @@
+/* Property Grid Design Language Styles */
+
+/* Custom CSS Variables for Property Grid */
+:root {
+  /* Spacing Scale (4px base unit) */
+  --pg-spacing-1: 0.25rem;   /* 4px */
+  --pg-spacing-2: 0.5rem;    /* 8px */
+  --pg-spacing-3: 0.75rem;   /* 12px */
+  --pg-spacing-4: 1rem;      /* 16px */
+  --pg-spacing-5: 1.25rem;   /* 20px */
+  --pg-spacing-6: 1.5rem;    /* 24px */
+  --pg-spacing-8: 2rem;      /* 32px */
+  --pg-spacing-10: 2.5rem;   /* 40px */
+  --pg-spacing-12: 3rem;     /* 48px */
+  --pg-spacing-16: 4rem;     /* 64px */
+
+  /* Component Spacing */
+  --pg-padding-sm: var(--pg-spacing-2);
+  --pg-padding-md: var(--pg-spacing-4);
+  --pg-padding-lg: var(--pg-spacing-6);
+
+  /* Margins */
+  --pg-margin-sm: var(--pg-spacing-2);
+  --pg-margin-md: var(--pg-spacing-4);
+  --pg-margin-lg: var(--pg-spacing-6);
+
+  /* Gaps */
+  --pg-gap-sm: var(--pg-spacing-2);
+  --pg-gap-md: var(--pg-spacing-4);
+  --pg-gap-lg: var(--pg-spacing-6);
+
+  /* Border Radius */
+  --pg-radius-sm: 0.125rem;   /* 2px */
+  --pg-radius-md: 0.25rem;    /* 4px */
+  --pg-radius-lg: 0.5rem;     /* 8px */
+  --pg-radius-xl: 0.75rem;    /* 12px */
+
+  /* Animation Timing */
+  --pg-duration-fast: 150ms;
+  --pg-duration-normal: 300ms;
+  --pg-duration-slow: 500ms;
+
+  /* Easing Functions */
+  --pg-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --pg-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --pg-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --pg-ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* Interactive States */
+  --pg-hover-opacity: 0.8;
+  --pg-hover-scale: 1.02;
+  --pg-active-opacity: 0.9;
+  --pg-active-scale: 0.98;
+
+  /* Focus States */
+  --pg-focus-ring-width: 2px;
+  --pg-focus-ring-offset: 2px;
+}
+
+/* Dark Theme Specific Variables */
+[data-theme="dark"], .dark {
+  /* Property Grid Specific Dark Theme Colors */
+  --pg-background: 222 84% 4.9%;           /* #0a0a0b */
+  --pg-foreground: 210 40% 98%;            /* #fafafa */
+  --pg-card: 222 84% 4.9%;                 /* #0a0a0b */
+  --pg-card-foreground: 210 40% 98%;       /* #fafafa */
+  --pg-muted: 217 32% 17%;                 /* #2a2e3a */
+  --pg-muted-foreground: 215 20% 65%;     /* #a1a1aa */
+  --pg-border: 217 32% 17%;                /* #2a2e3a */
+  --pg-input: 217 32% 17%;                 /* #2a2e3a */
+  --pg-accent: 217 32% 17%;                /* #2a2e3a */
+  --pg-accent-foreground: 210 40% 98%;    /* #fafafa */
+}
+
+/* Light Theme Specific Variables */
+[data-theme="light"], .light {
+  /* Property Grid Specific Light Theme Colors */
+  --pg-background: 0 0% 100%;              /* #ffffff */
+  --pg-foreground: 222 84% 4.9%;          /* #0a0a0b */
+  --pg-card: 0 0% 100%;                    /* #ffffff */
+  --pg-card-foreground: 222 84% 4.9%;     /* #0a0a0b */
+  --pg-muted: 210 40% 98%;                 /* #f8fafc */
+  --pg-muted-foreground: 215 16% 47%;     /* #64748b */
+  --pg-border: 214 32% 91%;                /* #e2e8f0 */
+  --pg-input: 214 32% 91%;                 /* #e2e8f0 */
+  --pg-accent: 210 40% 98%;                /* #f8fafc */
+  --pg-accent-foreground: 222 84% 4.9%;   /* #0a0a0b */
+}
+
+/* Property Grid Container Styles */
+.property-grid {
+  background: hsl(var(--pg-card));
+  color: hsl(var(--pg-card-foreground));
+  border: 1px solid hsl(var(--pg-border));
+  border-radius: var(--pg-radius-lg);
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+/* Property Section Styles */
+.property-section {
+  /* Custom styles for property sections */
+}
+
+.property-section-trigger {
+  background: hsl(var(--pg-muted) / 0.5);
+  transition: background-color var(--pg-duration-fast) var(--pg-ease-out);
+}
+
+.property-section-trigger:hover {
+  background: hsl(var(--pg-muted));
+}
+
+.property-section-trigger[data-state=open] .chevron-icon {
+  transform: rotate(180deg);
+}
+
+.chevron-icon {
+  transition: transform var(--pg-duration-normal) var(--pg-ease-out);
+}
+
+/* Property Field Styles */
+.property-field {
+  /* Grid layout for property fields */
+}
+
+.property-field-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: hsl(var(--pg-foreground));
+}
+
+.property-field-description {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: hsl(var(--pg-muted-foreground));
+}
+
+.property-field-control {
+  min-height: 2.5rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Toggle Field Styles */
+.property-toggle {
+  /* Custom toggle styling if needed */
+}
+
+/* Number Field Styles */
+.property-number-field {
+  /* Custom number field styling */
+}
+
+.property-number-buttons {
+  display: flex;
+  flex-direction: column;
+}
+
+.property-number-button {
+  height: 1.25rem;
+  width: 2rem;
+  padding: 0;
+  border: 1px solid hsl(var(--pg-border));
+  background: hsl(var(--pg-background));
+  color: hsl(var(--pg-foreground));
+  transition: all var(--pg-duration-fast) var(--pg-ease-out);
+}
+
+.property-number-button:hover:not(:disabled) {
+  background: hsl(var(--pg-accent));
+  border-color: hsl(var(--pg-border));
+}
+
+.property-number-button:first-child {
+  border-radius: var(--pg-radius-md) var(--pg-radius-md) 0 0;
+  border-bottom: none;
+}
+
+.property-number-button:last-child {
+  border-radius: 0 0 var(--pg-radius-md) var(--pg-radius-md);
+}
+
+/* Select Field Styles */
+.property-select {
+  /* Custom select styling if needed */
+}
+
+/* Action Button Group Styles */
+.property-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--pg-gap-sm);
+  padding: var(--pg-padding-md);
+  border-top: 1px solid hsl(var(--pg-border));
+  background: hsl(var(--pg-muted) / 0.5);
+}
+
+.property-action-button {
+  display: flex;
+  align-items: center;
+  gap: var(--pg-gap-sm);
+  transition: all var(--pg-duration-fast) var(--pg-ease-out);
+}
+
+.property-action-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.property-action-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Loading Spinner Styles */
+.property-loading-spinner {
+  animation: spin 1s linear infinite;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Search Input Styles */
+.property-search {
+  position: relative;
+}
+
+.property-search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: hsl(var(--pg-muted-foreground));
+  pointer-events: none;
+}
+
+.property-search-input {
+  padding-left: 2.25rem;
+  background: hsl(var(--pg-muted));
+  border: none;
+  border-radius: var(--pg-radius-md);
+}
+
+.property-search-input:focus {
+  box-shadow: 0 0 0 var(--pg-focus-ring-width) hsl(var(--ring));
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .property-field {
+    grid-template-columns: 1fr;
+    gap: var(--pg-gap-sm);
+  }
+  
+  .property-field-control {
+    min-height: auto;
+  }
+  
+  .property-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .property-action-button {
+    justify-content: center;
+  }
+}
+
+/* Accessibility Enhancements */
+@media (prefers-reduced-motion: reduce) {
+  .chevron-icon,
+  .property-action-button,
+  .property-number-button,
+  .property-section-trigger {
+    transition: none;
+  }
+  
+  .property-loading-spinner {
+    animation: none;
+  }
+}
+
+/* Focus Visible Support */
+.property-field-control:focus-visible,
+.property-section-trigger:focus-visible,
+.property-action-button:focus-visible {
+  outline: var(--pg-focus-ring-width) solid hsl(var(--ring));
+  outline-offset: var(--pg-focus-ring-offset);
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .property-grid {
+    border-width: 2px;
+  }
+  
+  .property-section-trigger {
+    border: 1px solid hsl(var(--pg-border));
+  }
+  
+  .property-field-label {
+    font-weight: 600;
+  }
+} 

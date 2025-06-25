@@ -3,12 +3,9 @@ import { createRoot } from 'react-dom/client';
 import './config/agGridModules'; // Register AG Grid modules
 import App from './App.tsx';
 import './index.css';
-import { ThemeProvider } from './components/theme-provider';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeProvider defaultTheme="dark" storageKey="agv1-theme">
-      <App />
-    </ThemeProvider>
+    <App />
   </StrictMode>
 );
