@@ -38,6 +38,7 @@ interface DataProviderManagerEvents {
   'provider:statusChange': (providerId: string, status: ConnectionStatus) => void;
   'provider:removed': (providerId: string) => void;
   'data': (data: any, providerId: string) => void;
+  'snapshot': (data: any, providerId: string, metadata?: { isPartial: boolean; totalReceived: number }) => void;
 }
 
 export class DataProviderManager extends TypedEventEmitter<DataProviderManagerEvents> {
@@ -45,6 +46,7 @@ export class DataProviderManager extends TypedEventEmitter<DataProviderManagerEv
   private subscriptions = new Map<string, DataSubscription>();
   private factory: DataProviderFactory;
   private options: DataProviderManagerOptions;
+  private providerSnapshots = new Map<string, any>();
 
   constructor(options: DataProviderManagerOptions = {}) {
     super();
@@ -53,11 +55,26 @@ export class DataProviderManager extends TypedEventEmitter<DataProviderManagerEv
   }
 
   /**
+   * Get cached snapshot for a provider
+   */
+  getCachedSnapshot(providerId: string): any | undefined {
+    return this.providerSnapshots.get(providerId);
+  }
+
+  /**
+   * Clear cached snapshot for a provider
+   */
+  clearCachedSnapshot(providerId: string): void {
+    this.providerSnapshots.delete(providerId);
+  }
+
+  /**
    * Create and register a data provider
    */
   async createProvider(config: DataProviderConfig): Promise<DataProvider> {
     if (this.providers.has(config.id)) {
-      throw new Error(`Provider with id ${config.id} already exists`);
+      console.warn(`[DataProviderManager] Provider ${config.id} already exists, returning existing provider`);
+      return this.providers.get(config.id)!;
     }
 
     const provider = this.factory.create(config);
@@ -69,6 +86,22 @@ export class DataProviderManager extends TypedEventEmitter<DataProviderManagerEv
     provider.on('error', (error) => this.emit('provider:error', config.id, error));
     provider.on('statusChange', (status) => this.emit('provider:statusChange', config.id, status));
     
+    // Handle snapshot data
+    provider.on('snapshot', (data, metadata) => {
+      console.log(`[DataProviderManager] Received snapshot from provider ${config.id} with ${Array.isArray(data) ? data.length : 1} records. Metadata:`, metadata);
+      
+      const transformed = this.options.globalTransform 
+        ? this.options.globalTransform(data) 
+        : data;
+      
+      // Only cache the final complete snapshot
+      if (!metadata?.isPartial) {
+        this.providerSnapshots.set(config.id, transformed);
+      }
+      
+      this.emit('snapshot', transformed, config.id, metadata);
+    });
+    
     // Handle data with global transform
     provider.on('data', (data) => {
       const transformed = this.options.globalTransform 
@@ -77,9 +110,17 @@ export class DataProviderManager extends TypedEventEmitter<DataProviderManagerEv
       this.handleProviderData(config.id, transformed);
     });
 
-    // Auto-connect if enabled
+    // Auto-connect if enabled with staggered delay to prevent resource exhaustion
     if (this.options.autoConnect) {
-      await provider.connect();
+      // Add a small random delay to stagger connections
+      const delay = Math.random() * 500; // 0-500ms random delay
+      setTimeout(async () => {
+        try {
+          await provider.connect();
+        } catch (error) {
+          console.error(`[DataProviderManager] Failed to auto-connect provider ${config.id}:`, error);
+        }
+      }, delay);
     }
 
     return provider;
@@ -101,6 +142,7 @@ export class DataProviderManager extends TypedEventEmitter<DataProviderManagerEv
       await provider.disconnect();
       provider.destroy();
       this.providers.delete(id);
+      this.providerSnapshots.delete(id);
       this.emit('provider:removed', id);
     }
   }

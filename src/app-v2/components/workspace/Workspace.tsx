@@ -7,14 +7,33 @@ import {
 } from 'dockview-react';
 import { useAppStore } from '../../store';
 import { DataTable } from '../data-table/DataTable';
+import { ComponentType } from '../../types';
 import 'dockview-react/dist/styles/dockview.css';
+
+// Panel component for DataTable
+const DataTablePanel = React.memo((props: IDockviewPanelProps<{ id: string }>) => {
+  return <DataTable id={props.params.id} />;
+});
+DataTablePanel.displayName = 'DataTablePanel';
+
+// Welcome panel component
+const WelcomePanel = React.memo(() => {
+  return (
+    <div className="flex items-center justify-center h-full text-muted-foreground">
+      <div className="text-center">
+        <h2 className="text-xl font-medium mb-2">Welcome to Workspace</h2>
+        <p>Click "Add Table" to get started</p>
+      </div>
+    </div>
+  );
+});
+WelcomePanel.displayName = 'WelcomePanel';
 
 // Panel components mapping
 const components = {
-  'data-table': (props: IDockviewPanelProps<{ id: string }>) => (
-    <DataTable id={props.params.id} />
-  ),
-};
+  [ComponentType.DataTable]: DataTablePanel,
+  'welcome': WelcomePanel,
+} as const;
 
 export function Workspace() {
   const dockviewRef = useRef<DockviewApi | null>(null);
@@ -81,6 +100,16 @@ export function Workspace() {
     componentMap.forEach((component, id) => {
       if (!dockviewRef.current!.getPanel(id)) {
         console.log('[Workspace] Adding panel:', id, component.type);
+        console.log('[Workspace] Component type:', component.type);
+        console.log('[Workspace] Available components:', Object.keys(components));
+        console.log('[Workspace] Component exists:', component.type in components);
+        
+        // Ensure we have a valid component
+        if (!(component.type in components)) {
+          console.error(`[Workspace] Component type "${component.type}" not found in components mapping`);
+          return;
+        }
+        
         dockviewRef.current!.addPanel({
           id,
           component: component.type,
@@ -119,17 +148,7 @@ export function Workspace() {
     <div className="flex-1 h-full dockview-theme-light">
       <DockviewReact
         onReady={onReady}
-        components={{
-          ...components,
-          welcome: () => (
-            <div className="flex items-center justify-center h-full text-muted-foreground">
-              <div className="text-center">
-                <h2 className="text-xl font-medium mb-2">Welcome to Workspace</h2>
-                <p>Click "Add Table" to get started</p>
-              </div>
-            </div>
-          ),
-        }}
+        components={components}
         watermarkComponent={() => null}
       />
     </div>

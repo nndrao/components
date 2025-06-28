@@ -4,8 +4,9 @@
  */
 
 import { ColDef, ColumnState, FilterModel } from 'ag-grid-community';
+import { ComponentType } from './services/config/config.types';
 
-export type ComponentType = 'data-table' | 'chart' | 'filter';
+export { ComponentType };
 
 export interface DataTableConfig {
   columns?: ColDef[];
@@ -34,6 +35,7 @@ export interface Profile {
   name: string;
   config: ProfileConfig;
   createdAt: number;
+  updatedAt?: number;
 }
 
 export interface WorkspaceData {

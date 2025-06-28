@@ -14,7 +14,7 @@ import { useDataSource } from '../../contexts/DataSourceContext';
 import { ConnectionStatus } from '../../providers/data/data-provider.types';
 import { cn } from '@/lib/utils';
 
-interface DataSourceSelectorProps {
+interface DataTableDataSourceSelectorProps {
   /**
    * Current data source ID
    */
@@ -31,7 +31,7 @@ interface DataSourceSelectorProps {
   className?: string;
 }
 
-export function DataSourceSelector({ value, onChange, className }: DataSourceSelectorProps) {
+export function DataSourceSelector({ value, onChange, className }: DataTableDataSourceSelectorProps) {
   const { 
     dataSources, 
     connectionStatus, 

@@ -295,6 +295,11 @@ export interface DataProviderEvents {
   messageSent: (message: DataProviderTrigger) => void;
   
   /**
+   * Snapshot data received
+   */
+  snapshot: (data: any, metadata?: { isPartial: boolean; totalReceived: number }) => void;
+  
+  /**
    * Snapshot complete (STOMP-specific)
    */
   snapshotComplete?: (complete: boolean) => void;

@@ -30,6 +30,11 @@ interface DataSourceButtonProps {
   size?: 'default' | 'sm' | 'lg' | 'icon';
   
   /**
+   * Additional CSS classes
+   */
+  className?: string;
+  
+  /**
    * Custom children (e.g., icon)
    */
   children?: React.ReactNode;
@@ -69,6 +74,7 @@ export function DataSourceButton({
   text = "Configure Data Sources",
   variant = "outline",
   size = "sm",
+  className,
   dataSources,
   connectionStatus,
   onSave,
@@ -89,7 +95,6 @@ export function DataSourceButton({
 
   // Handle edit
   const handleEdit = (dataSource: DataSourceConfig) => {
-    console.log('[DataSourceButton] Editing data source:', dataSource);
     setEditingDataSource(dataSource);
     setShowConfig(true);
   };
@@ -119,6 +124,7 @@ export function DataSourceButton({
       <Button
         variant={variant}
         size={size}
+        className={className}
         onClick={() => setShowList(true)}
       >
         {children || (

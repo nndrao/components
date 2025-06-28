@@ -32,6 +32,7 @@ import {
   ConnectionFormValues, 
   ConnectionTestResult,
   FieldInfo,
+  ColumnDefinition,
 } from './types';
 import { inferFields } from './utils/fieldInference';
 import { DataProviderType } from '../../providers/data/data-provider.types';
@@ -92,7 +93,12 @@ export function DataSourceConfigDialog({
   const [inferredFields, setInferredFields] = useState<FieldInfo[]>([]);
   const [selectedFields, setSelectedFields] = useState<Set<string>>(new Set());
   const [selectedFieldsList, setSelectedFieldsList] = useState<string[]>([]);
-  const [columnDefs, setColumnDefs] = useState([]);
+  const [columnDefs, setColumnDefsInternal] = useState<ColumnDefinition[]>([]);
+  
+  // Wrapper for setColumnDefs with debugging
+  const setColumnDefs = useCallback((newColumnDefs: ColumnDefinition[]) => {
+    setColumnDefsInternal(newColumnDefs);
+  }, [columnDefs]);
   const [keyColumn, setKeyColumn] = useState('');
   
   // Testing state
@@ -107,7 +113,6 @@ export function DataSourceConfigDialog({
   // Reset form when dataSource prop changes or dialog opens
   useEffect(() => {
     if (open) {
-      console.log('[DataSourceConfigDialog] Resetting form with dataSource:', dataSource);
       setName(dataSource?.displayName || '');
       setDescription(dataSource?.description || '');
       setConnectionValues({
@@ -122,7 +127,8 @@ export function DataSourceConfigDialog({
       });
       setInferredFields(dataSource?.inferredFields || []);
       setSelectedFields(new Set(dataSource?.selectedFields || []));
-      setColumnDefs(dataSource?.columnDefs || []);
+      const initialColumnDefs = dataSource?.columnDefs || [];
+      setColumnDefs(initialColumnDefs);
       setKeyColumn(dataSource?.keyColumn || dataSource?.settings?.keyColumn || '');
       setTestResult(null);
       setError(null);
@@ -269,9 +275,8 @@ export function DataSourceConfigDialog({
       const fields = inferFields(collectedData);
       setInferredFields(fields);
       
-      // Auto-select all fields initially
-      const allPaths = fields.map(f => f.path);
-      setSelectedFields(new Set(allPaths));
+      // Don't auto-select fields - let user choose
+      setSelectedFields(new Set());
       
       // Switch to fields tab
       setActiveTab('fields');
@@ -333,6 +338,7 @@ export function DataSourceConfigDialog({
     setError(null);
 
     try {
+
       const config: DataSourceConfig = {
         id: dataSource?.id || generateConfigId('datasource'),
         name: dataSource?.name || name.toLowerCase().replace(/\s+/g, '-'),
@@ -360,6 +366,7 @@ export function DataSourceConfigDialog({
         updatedAt: Date.now(),
       };
 
+
       await onSave(config);
       onClose();
     } catch (error) {
@@ -386,7 +393,7 @@ export function DataSourceConfigDialog({
       onOpenChange={onClose}
       title={isEditing ? `Edit Data Source${name ? ' - ' + name : ''}` : 'Create Data Source'}
       defaultSize={{ width: 1000, height: 600 }}
-      maxHeight="85vh"
+      maxHeight={window.innerHeight * 0.85}
     >
       <div className="flex flex-col h-full overflow-hidden">
         {/* Tabs - Start immediately after dialog header */}

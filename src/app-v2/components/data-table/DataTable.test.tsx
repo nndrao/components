@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { DataTable } from './DataTable';
 import { useAppStore } from '../../store';
+import { ComponentType } from '../../types';
 
 // Mock AG-Grid React component
 vi.mock('ag-grid-react', () => ({
@@ -35,7 +36,7 @@ describe('DataTable', () => {
       components: new Map([
         [mockComponentId, {
           id: mockComponentId,
-          type: 'data-table',
+          type: ComponentType.DataTable,
           title: 'Test Table',
           config: {},
         }],

@@ -2,12 +2,14 @@
  * useAutoSaveWorkspace Hook
  * 
  * Automatically saves the workspace when changes are detected.
+ * Uses the generic useAutoSave hook for debouncing and state management.
  */
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useMemo } from 'react';
 import { useAppStore } from '../store';
 import { WorkspaceManager } from '../services/workspace-manager';
 import { appStateManager } from '../services/app-state-manager';
+import { useAutoSave } from './useAutoSave';
 
 export function useAutoSaveWorkspace(enabled: boolean = true, debounceMs: number = 2000) {
   const components = useAppStore(state => state.components);
@@ -15,64 +17,36 @@ export function useAutoSaveWorkspace(enabled: boolean = true, debounceMs: number
   const activeProfiles = useAppStore(state => state.activeProfiles);
   const layout = useAppStore(state => state.layout);
   
-  // Create a stable reference to track if we should save
-  const shouldSave = useRef(false);
-  const saveTimer = useRef<NodeJS.Timeout>();
-  const hasInitialized = useRef(false);
+  // Create workspace data object
+  const workspaceData = useMemo(() => ({
+    components: Array.from(components.values()),
+    profiles: Array.from(profiles.values()),
+    activeProfiles: Array.from(activeProfiles.entries()),
+    layout
+  }), [components, profiles, activeProfiles, layout]);
   
-  // Create a debounced save function
-  const debouncedSave = useCallback(() => {
-    // Clear any existing timer
-    if (saveTimer.current) {
-      clearTimeout(saveTimer.current);
-    }
-    
-    // Set a new timer
-    saveTimer.current = setTimeout(async () => {
-      if (!shouldSave.current || !enabled) return;
-      
-      // Don't save until initial load is complete
-      if (!appStateManager.isInitialLoadComplete) {
-        console.log('Skipping auto-save - initial load not complete');
-        return;
-      }
-      
-      try {
-        await WorkspaceManager.saveToLocalStorage();
-        console.log('Auto-saved workspace');
-      } catch (error) {
-        console.error('Auto-save failed:', error);
-      }
-    }, debounceMs);
-  }, [enabled, debounceMs]);
-  
-  // Watch for changes
-  useEffect(() => {
-    // Skip the first few renders to allow workspace to load
-    if (!hasInitialized.current) {
-      // Wait for components to be loaded before starting auto-save
-      if (components.size > 0 || !enabled) {
-        hasInitialized.current = true;
-        shouldSave.current = true;
-      }
+  // Save function
+  const saveWorkspace = async () => {
+    // Don't save until initial load is complete
+    if (!appStateManager.isInitialLoadComplete) {
       return;
     }
     
-    if (enabled && shouldSave.current) {
-      debouncedSave();
-    }
-  }, [components, profiles, activeProfiles, layout, enabled, debouncedSave]);
+    await WorkspaceManager.saveToLocalStorage();
+  };
   
-  // Cleanup timer on unmount
-  useEffect(() => {
-    return () => {
-      if (saveTimer.current) {
-        clearTimeout(saveTimer.current);
-      }
-    };
-  }, []);
+  // Use the generic auto-save hook
+  const autoSave = useAutoSave(workspaceData, {
+    onSave: saveWorkspace,
+    debounceDelay: debounceMs,
+    enabled: enabled && appStateManager.isInitialLoadComplete,
+    interval: 0, // Disable periodic saves, only save on changes
+  });
   
   return {
-    save: () => WorkspaceManager.saveToLocalStorage(),
+    save: autoSave.save,
+    saveState: autoSave.saveState,
+    lastSaved: autoSave.lastSaved,
+    error: autoSave.error
   };
 }

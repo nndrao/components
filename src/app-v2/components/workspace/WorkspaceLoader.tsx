@@ -10,9 +10,9 @@ import { WorkspaceManager } from '../../services/workspace-manager';
 import { useAppStore } from '../../store';
 import { useSettings } from '../../contexts/SettingsContext';
 import { appStateManager } from '../../services/app-state-manager';
+import { ComponentType } from '../../types';
 
 export function WorkspaceLoader() {
-  console.log('[WorkspaceLoader] Component mounted');
   const { toast } = useToast();
   const { settings } = useSettings();
   const hasLoaded = useRef(false);
@@ -24,7 +24,6 @@ export function WorkspaceLoader() {
   }, [settings]);
 
   useEffect(() => {
-    console.log('[WorkspaceLoader] useEffect running, hasLoaded:', hasLoaded.current);
     // Only load once
     if (hasLoaded.current) return;
     hasLoaded.current = true;
@@ -35,7 +34,6 @@ export function WorkspaceLoader() {
       
       // Skip if auto-load is disabled
       if (!currentSettings.autoLoadWorkspace) {
-        console.log('Auto-load workspace is disabled');
         appStateManager.setInitialLoadComplete();
         return;
       }
@@ -43,12 +41,9 @@ export function WorkspaceLoader() {
       try {
         // Check if there's a saved workspace
         const workspaceExists = localStorage.getItem('workspace-v2');
-        console.log('[WorkspaceLoader] Workspace in localStorage:', !!workspaceExists);
         
         if (workspaceExists) {
-          console.log('[WorkspaceLoader] Loading saved workspace...');
           const loaded = await WorkspaceManager.loadFromLocalStorage();
-          console.log('[WorkspaceLoader] Workspace loaded:', loaded);
           
           if (loaded) {
             // Show a subtle notification
@@ -60,11 +55,10 @@ export function WorkspaceLoader() {
           }
         } else {
           // No saved workspace, create a default one with a data table
-          console.log('No saved workspace found, creating default workspace');
           
           // Add a default data table component
           const { addComponent } = useAppStore.getState();
-          addComponent('data-table');
+          addComponent(ComponentType.DataTable);
           
           // Show welcome message if enabled
           if (currentSettings.showWelcomeMessage) {
@@ -76,7 +70,6 @@ export function WorkspaceLoader() {
           }
         }
       } catch (error) {
-        console.error('Failed to load default workspace:', error);
         // Don't show error toast on startup to avoid annoying users
         // The app will just start with an empty workspace
       } finally {
@@ -85,8 +78,7 @@ export function WorkspaceLoader() {
       }
     };
 
-    // Run immediately to test
-    console.log('[WorkspaceLoader] Starting workspace load immediately...');
+    // Run immediately
     loadDefaultWorkspace();
   }, []); // Empty deps to ensure it only runs once
 

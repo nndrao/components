@@ -366,6 +366,21 @@ export function ConnectionConfigForm({
             )}
           </div>
 
+          <div className="space-y-1.5">
+            <Label htmlFor="snapshot-end-token" className="text-xs">Snapshot End Token</Label>
+            <Input
+              id="snapshot-end-token"
+              value={values.settings?.snapshotEndToken || ''}
+              onChange={(e) => updateSetting('snapshotEndToken', e.target.value)}
+              placeholder="e.g., END_SNAPSHOT"
+              className="h-7 text-sm"
+              disabled={disabled}
+            />
+            <p className="text-[10px] text-muted-foreground">
+              Token at the start of a message that indicates the end of snapshot data
+            </p>
+          </div>
+
         </>
       )}
 

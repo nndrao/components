@@ -162,6 +162,7 @@ export interface ConnectionFormValues {
     triggerDestination?: string;
     triggerMessage?: string;
     triggerFormat?: 'text' | 'json';
+    snapshotEndToken?: string;
     keyColumn?: string;
     // REST
     method?: string;

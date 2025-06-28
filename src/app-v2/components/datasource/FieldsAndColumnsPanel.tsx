@@ -186,8 +186,10 @@ export function FieldsAndColumnsPanel({
       .filter(field => !columnDefs.some(col => col.field === field))
       .map(field => createColumnDef(field));
     
+    
     if (newColumns.length > 0) {
-      onColumnDefsChange([...columnDefs, ...newColumns]);
+      const updatedColumnDefs = [...columnDefs, ...newColumns];
+      onColumnDefsChange(updatedColumnDefs);
       // Clear selection after adding
       onDeselectAll();
     }
@@ -302,7 +304,12 @@ export function FieldsAndColumnsPanel({
           <div className="mb-1.5 flex items-center justify-between">
             <div>
               <h4 className="text-xs font-medium">Available Fields</h4>
-              <p className="text-[10px] text-muted-foreground">Select fields to use as columns</p>
+              <p className="text-[10px] text-muted-foreground">
+                Select fields to use as columns
+                {selectedFields.size === 0 && (
+                  <span className="text-blue-500 ml-1">• Start by selecting fields</span>
+                )}
+              </p>
             </div>
             <Button
               onClick={onInferFields}
@@ -365,7 +372,14 @@ export function FieldsAndColumnsPanel({
         <div className="flex flex-col flex-1 min-w-0">
           <div className="mb-1.5">
             <h4 className="text-xs font-medium">Column Definitions</h4>
-            <p className="text-[10px] text-muted-foreground">{columnDefs.length} columns configured</p>
+            <p className="text-[10px] text-muted-foreground">
+              {columnDefs.length} columns configured
+              {selectedFields.size > 0 && columnDefs.length === 0 && (
+                <span className="text-orange-500 ml-1">
+                  • Click arrow to add selected fields
+                </span>
+              )}
+            </p>
           </div>
           <Card className="flex-1 flex flex-col min-h-0">
             <CardHeader className="p-2 border-b">
@@ -400,17 +414,34 @@ export function FieldsAndColumnsPanel({
                     className="pl-7 h-6 text-xs"
                   />
                 </div>
-                <Button
-                  className="w-full h-6 text-[11px]"
-                  variant="outline"
-                  onClick={() => {
-                    setEditingColumn(undefined);
-                    setShowColumnDialog(true);
-                  }}
-                >
-                  <Plus className="mr-1 h-3 w-3" />
-                  Add Column
-                </Button>
+                <div className="flex gap-1.5">
+                  <Button
+                    className="flex-1 h-6 text-[11px]"
+                    variant="outline"
+                    onClick={() => {
+                      setEditingColumn(undefined);
+                      setShowColumnDialog(true);
+                    }}
+                  >
+                    <Plus className="mr-1 h-3 w-3" />
+                    Add Column
+                  </Button>
+                  <Button
+                    className="flex-1 h-6 text-[11px]"
+                    variant="destructive"
+                    onClick={() => {
+                      if (confirm(`Are you sure you want to clear all ${columnDefs.length} column definitions? This cannot be undone.`)) {
+                        onColumnDefsChange([]);
+                        setSelectedColumnIndices(new Set());
+                        setSelectedColumnIndex(null);
+                      }
+                    }}
+                    disabled={columnDefs.length === 0}
+                  >
+                    <Trash2 className="mr-1 h-3 w-3" />
+                    Clear All
+                  </Button>
+                </div>
               </div>
             </CardHeader>
             <CardContent className="flex-1 min-h-0 p-0 overflow-hidden">
@@ -420,7 +451,7 @@ export function FieldsAndColumnsPanel({
                 {filteredColumns.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
                     {columnDefs.length === 0
-                      ? "No columns defined. Select fields from the left or add manually."
+                      ? "No columns defined. Select fields from the left panel and click the → arrow to add them here."
                       : "No columns match your search."}
                   </div>
                 ) : (

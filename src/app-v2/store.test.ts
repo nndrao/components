@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useAppStore } from './store';
+import { ComponentType } from './types';
 
 describe('AppStore', () => {
   beforeEach(() => {
@@ -15,17 +16,17 @@ describe('AppStore', () => {
 
   describe('Component Management', () => {
     it('should add a new component', () => {
-      const id = useAppStore.getState().addComponent('data-table');
+      const id = useAppStore.getState().addComponent(ComponentType.DataTable);
       
       expect(id).toBeTruthy();
       
       const state = useAppStore.getState();
       expect(state.components.get(id)).toBeDefined();
-      expect(state.components.get(id)?.type).toBe('data-table');
+      expect(state.components.get(id)?.type).toBe(ComponentType.DataTable);
     });
 
     it('should remove a component', () => {
-      const id = useAppStore.getState().addComponent('data-table');
+      const id = useAppStore.getState().addComponent(ComponentType.DataTable);
       
       useAppStore.getState().removeComponent(id);
       
@@ -36,7 +37,7 @@ describe('AppStore', () => {
     });
 
     it('should update a component', () => {
-      const id = useAppStore.getState().addComponent('data-table');
+      const id = useAppStore.getState().addComponent(ComponentType.DataTable);
       
       useAppStore.getState().updateComponent(id, { title: 'Updated Title' });
       
@@ -47,7 +48,7 @@ describe('AppStore', () => {
 
   describe('Profile Management', () => {
     it('should create a default profile when adding a component', () => {
-      const id = useAppStore.getState().addComponent('data-table');
+      const id = useAppStore.getState().addComponent(ComponentType.DataTable);
       
       const state = useAppStore.getState();
       const profiles = state.profiles.get(id);
@@ -57,7 +58,7 @@ describe('AppStore', () => {
     });
 
     it('should create a new profile', () => {
-      const id = useAppStore.getState().addComponent('data-table');
+      const id = useAppStore.getState().addComponent(ComponentType.DataTable);
       
       useAppStore.getState().createProfile(id, 'Custom Profile');
       
@@ -68,7 +69,7 @@ describe('AppStore', () => {
     });
 
     it('should switch active profile', () => {
-      const id = useAppStore.getState().addComponent('data-table');
+      const id = useAppStore.getState().addComponent(ComponentType.DataTable);
       useAppStore.getState().createProfile(id, 'Custom Profile');
       
       const state = useAppStore.getState();
@@ -82,7 +83,7 @@ describe('AppStore', () => {
     });
 
     it('should not delete the last profile', () => {
-      const id = useAppStore.getState().addComponent('data-table');
+      const id = useAppStore.getState().addComponent(ComponentType.DataTable);
       
       const state = useAppStore.getState();
       const profiles = state.profiles.get(id);
@@ -98,7 +99,7 @@ describe('AppStore', () => {
 
   describe('Workspace Operations', () => {
     it('should save workspace data', () => {
-      useAppStore.getState().addComponent('data-table');
+      useAppStore.getState().addComponent(ComponentType.DataTable);
       
       const data = useAppStore.getState().saveWorkspace();
       
@@ -109,7 +110,7 @@ describe('AppStore', () => {
     });
 
     it('should load workspace data', () => {
-      useAppStore.getState().addComponent('data-table');
+      useAppStore.getState().addComponent(ComponentType.DataTable);
       const savedData = useAppStore.getState().saveWorkspace();
       
       // Clear and reload
@@ -123,7 +124,7 @@ describe('AppStore', () => {
     });
 
     it('should clear workspace', () => {
-      useAppStore.getState().addComponent('data-table');
+      useAppStore.getState().addComponent(ComponentType.DataTable);
       
       useAppStore.getState().clearWorkspace();
       

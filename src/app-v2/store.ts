@@ -5,9 +5,10 @@ import type { ComponentConfig, ComponentType, Profile, WorkspaceData, ProfileCon
 interface AppState {
   // Components
   components: Map<string, ComponentConfig>;
-  addComponent: (type: ComponentType) => string;
+  addComponent: (type: ComponentType, customId?: string, customTitle?: string) => string;
   removeComponent: (id: string) => void;
   updateComponent: (id: string, updates: Partial<ComponentConfig>) => void;
+  hasComponent: (id: string) => boolean;
   
   // Profiles - simple and direct
   profiles: Map<string, Profile[]>;
@@ -42,12 +43,23 @@ export const useAppStore = create<AppState>()(
       isClearing: false,
       
       // Component management
-      addComponent: (type) => {
-        const id = generateId();
+      addComponent: (type, customId, customTitle) => {
+        // Use custom ID or generate one
+        let id = customId || generateId();
+        
+        // Ensure uniqueness if custom ID provided
+        if (customId && get().components.has(customId)) {
+          let suffix = 2;
+          while (get().components.has(`${customId}-${suffix}`)) {
+            suffix++;
+          }
+          id = `${customId}-${suffix}`;
+        }
+        
         const component: ComponentConfig = {
           id,
           type,
-          title: `${type} ${id.slice(0, 8)}`,
+          title: customTitle || `${type} ${id.slice(0, 8)}`,
           config: {}
         };
         
@@ -59,6 +71,10 @@ export const useAppStore = create<AppState>()(
         get().createProfile(id, 'Default');
         
         return id;
+      },
+      
+      hasComponent: (id) => {
+        return get().components.has(id);
       },
       
       removeComponent: (id) => {
@@ -101,11 +117,9 @@ export const useAppStore = create<AppState>()(
           const updatedProfiles = [...componentProfiles, profile];
           profiles.set(componentId, updatedProfiles);
           
-          // Auto-activate if first profile
+          // Always auto-select the newly created profile
           const activeProfiles = new Map(state.activeProfiles);
-          if (!activeProfiles.has(componentId) || componentProfiles.length === 0) {
-            activeProfiles.set(componentId, profile.id);
-          }
+          activeProfiles.set(componentId, profile.id);
           
           return { profiles, activeProfiles };
         });

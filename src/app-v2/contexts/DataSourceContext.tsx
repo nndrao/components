@@ -59,38 +59,33 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
   
   const managerRef = useRef<DataProviderManager>();
   const providersRef = useRef<Map<string, DataProvider>>(new Map());
+  const connectionQueueRef = useRef<string[]>([]);
+  const isProcessingQueueRef = useRef<boolean>(false);
 
   // Reload data sources from config store - define early to avoid hoisting issues
   const reloadDataSources = useCallback(async () => {
-    console.log('[DataSourceContext] Reloading data sources...');
     try {
       const configStore = useConfigStore.getState();
       if (!configStore.initialized) {
-        console.log('[DataSourceContext] Config store not initialized, initializing...');
         await configStore.initialize();
       }
       
-      console.log('[DataSourceContext] Loading configs from store...');
       await configStore.loadConfigs({ 
         componentType: 'DataSource' 
       });
       
       const configs = configStore.getConfigsByType('DataSource');
-      console.log('[DataSourceContext] Reloaded configs:', configs.length);
       
       if (configs.length > 0) {
         const dataSources = configs.map(config => {
-          console.log('[DataSourceContext] Config:', config.configId, config.name);
-          return config.settings as DataSourceConfig;
+          const dsConfig = config.settings as DataSourceConfig;
+          return dsConfig;
         });
-        console.log('[DataSourceContext] Setting data sources:', dataSources);
         setDataSources(dataSources);
       } else {
-        console.log('[DataSourceContext] No data sources found after reload');
         setDataSources([]);
       }
     } catch (error) {
-      console.error('[DataSourceContext] Failed to reload data sources:', error);
     }
   }, []);
 
@@ -113,44 +108,43 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
   // Expose reload function for WorkspaceManager
   useEffect(() => {
     (window as any).__dataSourceReload = reloadDataSources;
+    (window as any).__testSnapshot = (dataSourceId: string) => {
+      const provider = managerRef.current?.getProvider(dataSourceId);
+      if (provider && 'testEmitSnapshot' in provider) {
+        (provider as any).testEmitSnapshot();
+      }
+    };
     
     return () => {
       delete (window as any).__dataSourceReload;
+      delete (window as any).__testSnapshot;
     };
   }, [reloadDataSources]);
 
   // Load data sources from config store
   useEffect(() => {
     const loadDataSources = async () => {
-      console.log('[DataSourceContext] Initial load of data sources...');
       try {
         // Initialize config store if needed
         const configStore = useConfigStore.getState();
         if (!configStore.initialized) {
-          console.log('[DataSourceContext] Initializing config store...');
           await configStore.initialize();
         }
         
         // Load data source configs
-        console.log('[DataSourceContext] Loading configs from store...');
         await configStore.loadConfigs({ 
           componentType: 'DataSource' 
         });
         
         // Get loaded configs
         const configs = configStore.getConfigsByType('DataSource');
-        console.log('[DataSourceContext] Found configs on initial load:', configs.length);
         
         if (configs.length > 0) {
           // Map to DataSourceConfig array
           const dataSources = configs.map(config => config.settings as DataSourceConfig);
-          console.log('[DataSourceContext] Mapped data sources:', dataSources);
           setDataSources(dataSources);
-        } else {
-          console.log('[DataSourceContext] No data sources found on initial load');
         }
       } catch (error) {
-        console.error('[DataSourceContext] Failed to load data sources:', error);
       }
     };
     
@@ -159,6 +153,7 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
 
   // Create data source
   const createDataSource = useCallback(async (config: DataSourceConfig) => {
+    
     // Save to config store
     await saveConfig({
       configId: config.id,
@@ -183,6 +178,7 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
 
   // Update data source
   const updateDataSource = useCallback(async (config: DataSourceConfig) => {
+    
     const existingConfig = useConfigStore.getState().getConfig(config.id);
     
     await saveConfig({
@@ -212,20 +208,51 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
     setDataSources(prev => prev.filter(ds => ds.id !== id));
   }, [deleteConfig]);
 
-  // Connect data source
-  const connectDataSource = useCallback(async (id: string) => {
-    const dataSource = dataSources.find(ds => ds.id === id);
-    if (!dataSource || !managerRef.current) return;
-    
-    try {
-      const provider = await managerRef.current.createProvider(dataSource);
-      providersRef.current.set(id, provider);
-      await provider.connect();
-    } catch (error) {
-      console.error('Failed to connect data source:', error);
-      throw error;
+  // Process connection queue
+  const processConnectionQueue = useCallback(async () => {
+    if (isProcessingQueueRef.current || connectionQueueRef.current.length === 0) {
+      return;
     }
+    
+    isProcessingQueueRef.current = true;
+    
+    while (connectionQueueRef.current.length > 0) {
+      const id = connectionQueueRef.current.shift()!;
+      const dataSource = dataSources.find(ds => ds.id === id);
+      
+      if (dataSource && managerRef.current) {
+        try {
+          // Check if provider already exists
+          let provider = managerRef.current.getProvider(id);
+          
+          if (!provider) {
+            provider = await managerRef.current.createProvider(dataSource);
+            providersRef.current.set(id, provider);
+          }
+          
+          await provider.connect();
+          
+          // Add delay between connections to prevent resource exhaustion
+          await new Promise(resolve => setTimeout(resolve, 500));
+        } catch (error) {
+          console.error(`[DataSourceContext] Failed to connect ${id}:`, error);
+        }
+      }
+    }
+    
+    isProcessingQueueRef.current = false;
   }, [dataSources]);
+
+  // Connect data source (queued)
+  const connectDataSource = useCallback(async (id: string) => {
+    // Add to queue if not already present
+    if (!connectionQueueRef.current.includes(id)) {
+      connectionQueueRef.current.push(id);
+    }
+    
+    // Process queue
+    processConnectionQueue();
+  }, [processConnectionQueue]);
 
   // Disconnect data source
   const disconnectDataSource = useCallback(async (id: string) => {
@@ -235,7 +262,6 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
       await managerRef.current.removeProvider(id);
       providersRef.current.delete(id);
     } catch (error) {
-      console.error('Failed to disconnect data source:', error);
       throw error;
     }
   }, []);

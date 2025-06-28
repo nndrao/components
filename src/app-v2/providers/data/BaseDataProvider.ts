@@ -159,6 +159,7 @@ export abstract class BaseDataProvider extends TypedEventEmitter<DataProviderEve
       this.state.metadata!.messageCount!++;
 
       // Emit data event
+      console.log(`[${this.id}] Emitting data event with ${Array.isArray(parsedData) ? parsedData.length + ' records' : '1 record'}`);
       this.emit('data', parsedData);
     } catch (error) {
       this.handleError(new Error(`Failed to parse data: ${error}`));
@@ -200,16 +201,24 @@ export abstract class BaseDataProvider extends TypedEventEmitter<DataProviderEve
   }
 
   /**
-   * Schedule reconnection
+   * Schedule reconnection with exponential backoff
    */
   protected scheduleReconnect(): void {
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer);
     }
 
-    const delay = this.config.connection.reconnectInterval || 5000;
+    // Exponential backoff with jitter
+    const baseDelay = this.config.connection.reconnectInterval || 5000;
+    const maxDelay = 60000; // 1 minute max
+    const exponentialDelay = Math.min(baseDelay * Math.pow(2, this.reconnectAttempts), maxDelay);
+    const jitter = Math.random() * 2000; // 0-2 second jitter
+    const delay = exponentialDelay + jitter;
+    
     this.reconnectAttempts++;
     this.state.metadata!.reconnectAttempts = this.reconnectAttempts;
+    
+    console.log(`[${this.id}] Scheduling reconnect attempt ${this.reconnectAttempts} in ${Math.round(delay)}ms`);
     
     this.updateStatus(ConnectionStatus.Reconnecting);
     
@@ -217,6 +226,7 @@ export abstract class BaseDataProvider extends TypedEventEmitter<DataProviderEve
       try {
         await this.connect();
       } catch (error) {
+        console.error(`[${this.id}] Reconnect attempt ${this.reconnectAttempts} failed:`, error);
         // Reconnect failed, will be handled by connect method
       }
     }, delay);
