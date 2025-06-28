@@ -44,6 +44,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { SettingsDialog } from '@/app-v2/components/settings/SettingsDialog';
 
 export function Sidebar() {
   const { addComponent, saveWorkspace, loadWorkspace, clearWorkspace, components } = useAppStore();
@@ -65,6 +66,7 @@ export function Sidebar() {
     return saved === 'true';
   });
   const [isExpanded, setIsExpanded] = useState(isPinned);
+  const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   
   const handleAddTable = () => {
     setShowCreateDialog(true);
@@ -366,13 +368,13 @@ export function Sidebar() {
                       variant="ghost"
                       className="w-full justify-start hover:bg-primary/10"
                       size="sm"
-                      disabled
+                      onClick={() => setShowSettingsDialog(true)}
                     >
                       <Settings className="h-4 w-4 mr-2" />
                       Settings
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent side="right">Coming soon</TooltipContent>
+                  <TooltipContent side="right">Application Settings</TooltipContent>
                 </Tooltip>
                 
                 <Tooltip>
@@ -471,6 +473,11 @@ export function Sidebar() {
           onOpenChange={setShowCreateDialog}
           componentType={ComponentType.DataTable}
           onConfirm={handleCreateComponent}
+        />
+        
+        <SettingsDialog
+          open={showSettingsDialog}
+          onOpenChange={setShowSettingsDialog}
         />
       </div>
     </TooltipProvider>

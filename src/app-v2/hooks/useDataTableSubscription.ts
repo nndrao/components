@@ -103,8 +103,22 @@ export function useDataTableSubscription({
   
   // Memoize key extractor
   const getRowKey = useCallback((row: any) => {
-    return row[effectiveKeyColumn] || row.id || row._id;
-  }, [effectiveKeyColumn]);
+    // Handle case where row might be null/undefined
+    if (!row || typeof row !== 'object') {
+      console.warn(`[DataTable-${componentId}] Invalid row data:`, row);
+      return null;
+    }
+    
+    // Try to get the key value
+    const keyValue = row[effectiveKeyColumn] || row.id || row._id;
+    
+    // Debug logging for troubleshooting
+    if (!keyValue && row) {
+      console.debug(`[DataTable-${componentId}] No key found. effectiveKeyColumn: ${effectiveKeyColumn}, row keys:`, Object.keys(row).slice(0, 10));
+    }
+    
+    return keyValue;
+  }, [effectiveKeyColumn, componentId]);
   
   // Process batched updates using AG-Grid transactions
   const processBatchedUpdates = useCallback(() => {
@@ -258,10 +272,18 @@ export function useDataTableSubscription({
     
     const updates = Array.isArray(data) ? data : [data];
     
+    // Debug logging
+    console.log(`[DataTable-${componentId}] Using key column: ${effectiveKeyColumn}`);
+    if (updates.length > 0) {
+      console.log(`[DataTable-${componentId}] Sample record:`, updates[0]);
+      console.log(`[DataTable-${componentId}] Available keys in record:`, Object.keys(updates[0]));
+    }
+    
     let updateCount = 0;
     let newCount = 0;
+    let skippedCount = 0;
     
-    updates.forEach(row => {
+    updates.forEach((row, index) => {
       const key = getRowKey(row);
       if (key) {
         // Check if this is an update or new row
@@ -274,9 +296,17 @@ export function useDataTableSubscription({
           newCount++;
         }
       } else {
-        console.warn(`[DataTable-${componentId}] Row missing key column: ${effectiveKeyColumn}`, row);
+        skippedCount++;
+        if (index === 0) { // Only log first missing key to avoid spam
+          console.warn(`[DataTable-${componentId}] Row missing key column: ${effectiveKeyColumn}. Row data:`, row);
+          console.warn(`[DataTable-${componentId}] Attempted to get key using: row['${effectiveKeyColumn}'] || row.id || row._id`);
+        }
       }
     });
+    
+    if (skippedCount > 0) {
+      console.warn(`[DataTable-${componentId}] Skipped ${skippedCount} records due to missing key column`);
+    }
     
     console.log(`[DataTable-${componentId}] Batched ${updateCount} updates and ${newCount} new rows. Total pending: ${updateBatchRef.current.length}`);
     
@@ -301,7 +331,7 @@ export function useDataTableSubscription({
         processBatchedUpdates();
       }, batchInterval);
     }
-  }, [componentId, getRowKey, processBatchedUpdates, batchInterval]);
+  }, [componentId, getRowKey, processBatchedUpdates, batchInterval, effectiveKeyColumn]);
   
   // Subscribe to data source with component-specific filtering
   useEffect(() => {
