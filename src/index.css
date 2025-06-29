@@ -10,6 +10,44 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Ensure AG-Grid fills its container properly */
+.ag-theme-quartz {
+  height: 100%;
+  width: 100%;
+}
+
+.ag-root-wrapper {
+  height: 100%;
+  width: 100%;
+}
+
+.ag-root {
+  height: 100%;
+  width: 100%;
+}
+
+/* Force AG-Grid scrollbars */
+.ag-body-viewport {
+  overflow-y: scroll !important;
+  overflow-x: auto !important;
+}
+
+.ag-body-horizontal-scroll-viewport {
+  overflow-x: scroll !important;
+}
+
+/* Ensure dockview panels handle overflow correctly */
+.dockview-react-panel-content {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.dockview-react-panel-content > * {
+  flex: 1;
+  min-height: 0;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -127,55 +165,187 @@
   background-color: rgba(255, 69, 0, 0.1) !important;
 }
 
-/* Custom Scrollbar Styles */
+/* Ensure ScrollArea component's custom scrollbar takes precedence */
 @layer utilities {
-  /* Webkit Scrollbar Styles - Chrome, Safari, Edge */
-  ::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: hsl(var(--background));
-    border-radius: 6px;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--muted));
-    border-radius: 6px;
-    border: 3px solid hsl(var(--background));
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: hsl(var(--muted-foreground) / 0.5);
-  }
-  
-  /* Dark mode specific adjustments */
-  .dark ::-webkit-scrollbar-track {
-    background: hsl(var(--background));
-  }
-  
-  .dark ::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--muted));
-    border: 3px solid hsl(var(--background));
-  }
-  
-  .dark ::-webkit-scrollbar-thumb:hover {
-    background-color: hsl(var(--muted-foreground) / 0.5);
-  }
-  
-  /* Firefox Scrollbar Styles */
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: hsl(var(--muted)) hsl(var(--background));
-  }
-  
-  /* Ensure ScrollArea component's custom scrollbar takes precedence */
   [data-radix-scroll-area-viewport] {
     scrollbar-width: none;
   }
   
   [data-radix-scroll-area-viewport]::-webkit-scrollbar {
     display: none;
+  }
+}
+
+/* AG-Grid Cell Flashing Styles */
+@layer utilities {
+  /* Cell flash effect for data changes */
+  .ag-theme-quartz .ag-cell-data-changed {
+    background-color: #22c55e !important; /* Green flash for updated values */
+    transition: background-color 500ms ease-out;
+  }
+  
+  .ag-theme-quartz .ag-cell-data-changed-animation {
+    background-color: #16a34a !important; /* Slightly darker green during animation */
+  }
+  
+  /* Dark mode cell flashing */
+  .dark .ag-theme-quartz .ag-cell-data-changed {
+    background-color: #16a34a !important; /* Darker green for dark mode */
+  }
+  
+  .dark .ag-theme-quartz .ag-cell-data-changed-animation {
+    background-color: #15803d !important; /* Even darker green for animation */
+  }
+  
+  /* Custom flash colors for different value types */
+  .ag-theme-quartz .ag-cell.cell-number.ag-cell-data-changed {
+    background-color: #3b82f6 !important; /* Blue for numbers */
+  }
+  
+  .ag-theme-quartz .ag-cell.cell-price.ag-cell-data-changed {
+    background-color: #f59e0b !important; /* Amber for prices */
+  }
+  
+  .ag-theme-quartz .ag-cell.cell-pnl.ag-cell-data-changed {
+    background-color: #10b981 !important; /* Emerald for P&L */
+  }
+  
+  /* Dark mode variants for specific cell types */
+  .dark .ag-theme-quartz .ag-cell.cell-number.ag-cell-data-changed {
+    background-color: #2563eb !important; /* Darker blue for dark mode numbers */
+  }
+  
+  .dark .ag-theme-quartz .ag-cell.cell-price.ag-cell-data-changed {
+    background-color: #d97706 !important; /* Darker amber for dark mode prices */
+  }
+  
+  .dark .ag-theme-quartz .ag-cell.cell-pnl.ag-cell-data-changed {
+    background-color: #059669 !important; /* Darker emerald for dark mode P&L */
+  }
+  
+  /* Flash timing and animation smoothness */
+  .ag-theme-quartz .ag-cell-data-changed,
+  .ag-theme-quartz .ag-cell-data-changed-animation {
+    transition: background-color 500ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Subtle border flash effect */
+  .ag-theme-quartz .ag-cell-data-changed {
+    border: 1px solid rgba(34, 197, 94, 0.3) !important;
+    box-shadow: 0 0 4px rgba(34, 197, 94, 0.2) !important;
+  }
+  
+  /* Dark mode border flash */
+  .dark .ag-theme-quartz .ag-cell-data-changed {
+    border: 1px solid rgba(22, 163, 74, 0.4) !important;
+    box-shadow: 0 0 4px rgba(22, 163, 74, 0.3) !important;
+  }
+}
+
+/* AG-Grid Enterprise Sidebar and Status Bar Styling */
+@layer utilities {
+  /* Status Bar styling */
+  .ag-theme-quartz .ag-status-bar {
+    background-color: hsl(var(--muted)) !important;
+    border-top: 1px solid hsl(var(--border)) !important;
+    font-size: 12px !important;
+    height: 32px !important;
+  }
+  
+  .ag-theme-quartz .ag-status-name-value {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+  
+  .ag-theme-quartz .ag-status-name-value-value {
+    color: hsl(var(--foreground)) !important;
+    font-weight: 500 !important;
+  }
+
+  /* Sidebar styling */
+  .ag-theme-quartz .ag-side-bar {
+    background-color: hsl(var(--card)) !important;
+    border-left: 1px solid hsl(var(--border)) !important;
+  }
+  
+  .ag-theme-quartz .ag-side-buttons {
+    background-color: hsl(var(--muted)) !important;
+    border-left: 1px solid hsl(var(--border)) !important;
+  }
+  
+  .ag-theme-quartz .ag-side-button {
+    color: hsl(var(--muted-foreground)) !important;
+    background-color: transparent !important;
+    border-bottom: 1px solid hsl(var(--border)) !important;
+  }
+  
+  .ag-theme-quartz .ag-side-button:hover {
+    background-color: hsl(var(--accent)) !important;
+    color: hsl(var(--accent-foreground)) !important;
+  }
+  
+  .ag-theme-quartz .ag-side-button.ag-selected {
+    background-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+  }
+
+  /* Tool Panel styling */
+  .ag-theme-quartz .ag-tool-panel-wrapper {
+    background-color: hsl(var(--card)) !important;
+    border: none !important;
+  }
+  
+  .ag-theme-quartz .ag-column-select-header {
+    background-color: hsl(var(--muted)) !important;
+    border-bottom: 1px solid hsl(var(--border)) !important;
+    color: hsl(var(--foreground)) !important;
+    font-weight: 600 !important;
+  }
+  
+  .ag-theme-quartz .ag-column-select-column {
+    color: hsl(var(--foreground)) !important;
+  }
+  
+  .ag-theme-quartz .ag-column-select-column:hover {
+    background-color: hsl(var(--accent)) !important;
+  }
+
+  /* Filter Tool Panel styling */
+  .ag-theme-quartz .ag-filter-toolpanel-header {
+    background-color: hsl(var(--muted)) !important;
+    border-bottom: 1px solid hsl(var(--border)) !important;
+    color: hsl(var(--foreground)) !important;
+    font-weight: 600 !important;
+  }
+  
+  .ag-theme-quartz .ag-filter-toolpanel-instance-header {
+    background-color: hsl(var(--accent)) !important;
+    color: hsl(var(--accent-foreground)) !important;
+  }
+
+  /* Checkbox styling in tool panels */
+  .ag-theme-quartz .ag-checkbox-input-wrapper {
+    background-color: hsl(var(--background)) !important;
+    border: 1px solid hsl(var(--border)) !important;
+  }
+  
+  .ag-theme-quartz .ag-checkbox-input-wrapper.ag-checked {
+    background-color: hsl(var(--primary)) !important;
+    border-color: hsl(var(--primary)) !important;
+  }
+
+  /* Dark mode adjustments for enterprise components */
+  .dark .ag-theme-quartz .ag-status-bar {
+    background-color: hsl(var(--muted)) !important;
+    border-top-color: hsl(var(--border)) !important;
+  }
+  
+  .dark .ag-theme-quartz .ag-side-bar {
+    background-color: hsl(var(--card)) !important;
+    border-left-color: hsl(var(--border)) !important;
+  }
+  
+  .dark .ag-theme-quartz .ag-side-buttons {
+    background-color: hsl(var(--muted)) !important;
+    border-left-color: hsl(var(--border)) !important;
   }
 }

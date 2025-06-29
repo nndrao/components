@@ -1,0 +1,53 @@
+/* Base styles for the v2 app */
+@import 'dockview-react/dist/styles/dockview.css';
+
+/* Dockview theme customizations */
+.dockview-theme-light {
+  --dv-tabs-background: hsl(var(--muted) / 0.5);
+  --dv-activegroup-visiblepanel-tab-background: hsl(var(--background));
+  --dv-activegroup-visiblepanel-tab-color: hsl(var(--foreground));
+  --dv-inactivegroup-visiblepanel-tab-color: hsl(var(--muted-foreground));
+  --dv-tab-divider: hsl(var(--border));
+  --dv-paneview-header-border: hsl(var(--border));
+  --dv-group-view-background: hsl(var(--card));
+  --dv-tabs-container-height: 36px;
+  --dv-drag-over-background-color: hsl(var(--primary) / 0.1);
+  --dv-drag-over-border-color: hsl(var(--primary));
+}
+
+/* Dark mode support for Dockview */
+.dark .dockview-theme-light {
+  --dv-tabs-background: hsl(var(--muted) / 0.3);
+  --dv-activegroup-visiblepanel-tab-background: hsl(var(--background));
+  --dv-activegroup-visiblepanel-tab-color: hsl(var(--foreground));
+  --dv-inactivegroup-visiblepanel-tab-color: hsl(var(--muted-foreground));
+  --dv-tab-divider: hsl(var(--border));
+  --dv-paneview-header-border: hsl(var(--border));
+  --dv-group-view-background: hsl(var(--card));
+}
+
+/* Dockview tab styling */
+.dockview-theme-light .tabs-container {
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+}
+
+.dockview-theme-light .tab {
+  font-size: 13px;
+  font-weight: 500;
+  padding: 0 16px;
+}
+
+.dockview-theme-light .tab:hover {
+  background: hsl(var(--muted) / 0.5);
+}
+
+/* Sidebar animations */
+.sidebar-transition {
+  transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Ensure smooth animations for sidebar content */
+.sidebar-content {
+  overflow: hidden;
+  white-space: nowrap;
+}
