@@ -5,6 +5,7 @@ import { WorkspaceLoader } from './components/workspace/WorkspaceLoader';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { SettingsProvider, useSettings } from './contexts/SettingsContext';
 import { DataSourceProvider } from './contexts/DataSourceContext';
+import { SharedWorkerProvider } from './contexts/SharedWorkerContext';
 import { Toaster } from '@/components/ui/toaster';
 import { useAutoSaveWorkspace } from './hooks/useAutoSaveWorkspace';
 import './styles/app.css';
@@ -16,18 +17,20 @@ function AppContent() {
   useAutoSaveWorkspace(settings.autoSave, settings.autoSaveInterval);
   
   return (
-    <DataSourceProvider>
-      <WorkspaceLoader />
-      <div className="h-screen flex bg-background">
-        <Sidebar />
-        
-        <main className="flex-1 overflow-hidden bg-background">
-          <Workspace />
-        </main>
-        
-        <Toaster />
-      </div>
-    </DataSourceProvider>
+    <SharedWorkerProvider enabled={settings.useSharedWorker}>
+      <DataSourceProvider>
+        <WorkspaceLoader />
+        <div className="h-screen flex bg-background">
+          <Sidebar />
+          
+          <main className="flex-1 overflow-hidden bg-background">
+            <Workspace />
+          </main>
+          
+          <Toaster />
+        </div>
+      </DataSourceProvider>
+    </SharedWorkerProvider>
   );
 }
 

@@ -9,6 +9,9 @@ import { DataProviderManager } from '../providers/data/DataProviderManager';
 import { ConnectionStatus, DataProvider } from '../providers/data/data-provider.types';
 import { DataSourceConfig } from '../components/datasource/types';
 import { useConfigStore } from '../stores/config.store';
+import { useSettings } from './SettingsContext';
+import { SharedWorkerDataProviderFactory } from '../providers/data/SharedWorkerDataProviderFactory';
+import { defaultDataProviderFactory } from '../providers/data/DataProviderFactory';
 
 interface DataSourceContextType {
   /**
@@ -54,6 +57,7 @@ interface DataSourceProviderProps {
 
 export function DataSourceProvider({ children }: DataSourceProviderProps) {
   const { saveConfig, deleteConfig } = useConfigStore();
+  const { settings } = useSettings();
   const [dataSources, setDataSources] = useState<DataSourceConfig[]>([]);
   const [connectionStatus, setConnectionStatus] = useState<Map<string, ConnectionStatus>>(new Map());
   
@@ -61,6 +65,7 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
   const providersRef = useRef<Map<string, DataProvider>>(new Map());
   const connectionQueueRef = useRef<string[]>([]);
   const isProcessingQueueRef = useRef<boolean>(false);
+  const factoryRef = useRef<SharedWorkerDataProviderFactory>();
 
   // Reload data sources from config store - define early to avoid hoisting issues
   const reloadDataSources = useCallback(async () => {
@@ -89,10 +94,17 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
     }
   }, []);
 
-  // Initialize manager
+  // Initialize manager with SharedWorker support
   useEffect(() => {
+    // Create factory with SharedWorker support
+    factoryRef.current = new SharedWorkerDataProviderFactory(
+      defaultDataProviderFactory,
+      settings.useSharedWorker
+    );
+    
     managerRef.current = new DataProviderManager({
       autoConnect: false,
+      factory: factoryRef.current,
     });
 
     // Set up event handlers
@@ -103,7 +115,7 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
     return () => {
       managerRef.current?.destroy();
     };
-  }, []);
+  }, [settings.useSharedWorker]);
 
   // Expose reload function for WorkspaceManager
   useEffect(() => {
