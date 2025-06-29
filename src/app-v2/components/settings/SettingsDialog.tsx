@@ -155,10 +155,25 @@ export const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onOpenChan
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="space-y-2">
-                    <Label>Developer Options</Label>
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="shared-worker">Use SharedWorker</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Enable SharedWorker for improved performance with multiple data tables
+                      </p>
+                    </div>
+                    <Switch
+                      id="shared-worker"
+                      checked={settings.useSharedWorker}
+                      onCheckedChange={(checked) => updateSettings({ useSharedWorker: checked })}
+                    />
+                  </div>
+                  
+                  <div className="pt-4 border-t">
                     <p className="text-sm text-muted-foreground">
-                      Advanced settings will be available in a future update
+                      SharedWorker centralizes data connections and caching across all components, 
+                      reducing memory usage and improving performance. Requires browser support and 
+                      page reload to take effect.
                     </p>
                   </div>
                 </CardContent>

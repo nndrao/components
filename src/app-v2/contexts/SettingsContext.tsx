@@ -11,6 +11,7 @@ interface Settings {
   autoSaveInterval: number; // milliseconds
   autoLoadWorkspace: boolean;
   showWelcomeMessage: boolean;
+  useSharedWorker: boolean;
 }
 
 interface SettingsContextType {
@@ -24,6 +25,7 @@ const defaultSettings: Settings = {
   autoSaveInterval: 2000,
   autoLoadWorkspace: true,
   showWelcomeMessage: true,
+  useSharedWorker: true,
 };
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
